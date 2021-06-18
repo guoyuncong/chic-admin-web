@@ -13,7 +13,6 @@ export default {
 <style lang="scss" scope>
 .navbar {
   height: 50px;
-  overflow: hidden;
   position: relative;
   }
 </style>
