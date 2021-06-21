@@ -1,7 +1,5 @@
 <template>
-  <div class="navbar">
-    你好
-  </div>
+  <div class="navbar">你好</div>
 </template>
 
 <script>
@@ -14,5 +12,5 @@ export default {
 .navbar {
   height: 50px;
   position: relative;
-  }
+}
 </style>

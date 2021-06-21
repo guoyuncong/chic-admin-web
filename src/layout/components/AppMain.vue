@@ -1,5 +1,6 @@
 <template>
   <div class="app-main">
+    你好
      <router-view></router-view>
   </div>
 </template>
