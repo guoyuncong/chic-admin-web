@@ -1,6 +1,8 @@
 <template>
   <div class="app-wrapper">
-    <navbar />
+    <div class="left">
+      <Navbar />
+    </div>
     <app-main />
   </div>
 </template>
@@ -22,5 +24,6 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+  display: flex;
 }
 </style>

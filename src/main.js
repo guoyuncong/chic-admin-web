@@ -7,6 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/styles/index.scss'
 
 import App from './App'
+import store from './store'
 import router from './router'
 
 import '@/icons' // icon
@@ -16,5 +17,6 @@ Vue.use(ElementUI)
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 })

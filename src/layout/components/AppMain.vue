@@ -11,7 +11,7 @@ export default {
 <style scoped>
 .app-main {
   width: 100%;
+  background: #aaaaaa;
   position: relative;
-  background: red;
 }
 </style>
