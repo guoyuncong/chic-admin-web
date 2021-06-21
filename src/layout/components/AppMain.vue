@@ -1,8 +1,5 @@
 <template>
-  <div class="app-main">
-    你好
-     <router-view></router-view>
-  </div>
+  <div class="app-main" />
 </template>
 
 <script>
@@ -13,9 +10,8 @@ export default {
 
 <style scoped>
 .app-main {
-  /*50 = navbar  */
-  min-height: calc(100vh - 50px);
   width: 100%;
   position: relative;
+  background: red;
 }
 </style>

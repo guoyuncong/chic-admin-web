@@ -10,6 +10,7 @@ export default {
 
 <style lang="scss" scope>
 .navbar {
+  background: #000;
   height: 50px;
   position: relative;
 }

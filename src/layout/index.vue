@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <Navbar />
-    <AppMain />
+  <div class="app-wrapper">
+    你好
+    <navbar />
+    <app-main />
   </div>
 </template>
 
@@ -17,5 +18,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.app-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
 </style>
