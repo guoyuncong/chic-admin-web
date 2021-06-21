@@ -1,6 +1,5 @@
 <template>
   <div class="app-wrapper">
-    你好
     <navbar />
     <app-main />
   </div>
