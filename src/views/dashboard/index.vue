@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>你好</div>
+    <div>仪表盘</div>
   </div>
 </template>
 

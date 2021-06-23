@@ -15,23 +15,59 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: 'Dashboard', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
+    path: '/posts',
+    component: Layout,
+    redirect: '/posts/post',
+    name: 'Posts',
+    meta: { title: '文章', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'post',
+        name: 'Posts',
+        component: () => import('@/views/posts/index'),
+        meta: { title: '文章', icon: 'tree' }
+      },
+      {
+        path: 'category',
+        name: 'Category',
+        component: () => import('@/views/category/index'),
+        meta: { title: '分类', icon: 'tree' }
+      },
+      {
+        path: 'tag',
+        name: 'Tag',
+        component: () => import('@/views/tag/index'),
+        meta: { title: '标签', icon: 'tree' }
+      }
+    ]
   }
 ]
 
-const createRouter = () => new Router({
-  // mode: 'history',
-  // 在 vue 项目中，如果前一个页面有滚动条的滚动，当路由跳转后发现滚动条的位置还保持在原来的位置，这个就带来了困扰
-  // 使用 scrollBehavior 这种方法可以在每次路由跳转后手动使滚动条回到头部位置
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
+const createRouter = () =>
+  new Router({
+    // mode: 'history',
+    // 在 vue 项目中，如果前一个页面有滚动条的滚动，当路由跳转后发现滚动条的位置还保持在原来的位置，这个就带来了困扰
+    // 使用 scrollBehavior 这种方法可以在每次路由跳转后手动使滚动条回到头部位置
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes
+  })
 
 const router = createRouter()
+
+// Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
 
 export default router
