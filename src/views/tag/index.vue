@@ -1,5 +1,5 @@
 <template>
-  <el-container style="height: 500px; border: 1px solid #eee">
+  <el-container style="height: 100%; border: 1px solid #eee">
     <el-container>
       <el-header style="font-size: 12px" :inline="true">
         <el-col :span="5">
@@ -9,13 +9,18 @@
       </el-header>
       <el-main>
         <el-table :data="tableData">
-          <el-table-column prop="tagName" label="姓名" width="120" />
-          <template slot-scope="scope">
-            <el-button type="text" size="small" @click.native.prevent="deleteRow(scope.$index, tableData)">
-              移除
-            </el-button>
-          </template>
-        </el-table>
+          <el-table-column align="center" prop="tagName" label="名称" />
+          <el-table-column align="center" prop="createTime" label="时间">
+            <template slot-scope="scope">
+              <span>{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" fixed="right" label="操作">
+            <template slot-scope="scope">
+              <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            </template>
+          </el-table-column></el-table>
       </el-main>
     </el-container>
     <el-aside width="40%" style="background-color: rgb(238, 241, 246)" />
@@ -23,7 +28,9 @@
 </template>
 
 <script>
-import { getList } from '@/api/tag'
+import { getList, deleteTag } from '@/api/tag'
+
+import { formatDate } from '@/utils/formatDate'
 
 export default {
   filters: {
@@ -34,12 +41,15 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
+    },
+    formatDate(value) {
+      return formatDate(value, 'yyyy-MM-dd')
     }
   },
   data() {
     return {
       keyword: '',
-      tableData: []
+      tableData: null
     }
   },
   created() {
@@ -47,11 +57,21 @@ export default {
   },
   methods: {
     fetchData() {
-      this.listLoading = true
       getList().then(response => {
         this.tableData = response.data
-        console.log(this.tableData)
-        this.listLoading = false
+      })
+    },
+    deleteTag(index, row) {
+
+    },
+    handleEdit(index, row) {
+
+    },
+    handleDelete(index, row) {
+      deleteTag({
+        tagIds: [row.tagId]
+      }).then(response => {
+
       })
     }
   }

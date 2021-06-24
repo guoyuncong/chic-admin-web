@@ -18,7 +18,7 @@ export default {
   },
   watch: {
     $route() {
-      this.getBreadcrumb()
+      this.getMenuItem()
     }
   },
   created() {

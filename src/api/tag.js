@@ -7,3 +7,11 @@ export function getList(params) {
     params
   })
 }
+
+export function deleteTag(data) {
+  return request({
+    url: '/post/tag/delete',
+    method: 'post',
+    data
+  })
+}
