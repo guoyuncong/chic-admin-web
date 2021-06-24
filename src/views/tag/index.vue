@@ -1,49 +1,25 @@
 <template>
-  <div class="tag">
-    <div class="add-tag">
-      <template>
+  <el-container style="height: 500px; border: 1px solid #eee">
+    <el-container>
+      <el-header style="font-size: 12px" :inline="true">
+        <el-col :span="5">
+          <el-input v-model="keyword" placeholder="关键字" clearable />
+        </el-col>
+        <el-button type="primary" icon="el-icon-search">搜索</el-button>
+      </el-header>
+      <el-main>
         <el-table :data="tableData">
-          <el-table-column
-            label="日期"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <i class="el-icon-time" />
-              <span style="margin-left: 10px">{{ scope.row.date }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="姓名"
-            width="180"
-          >
-            <template slot-scope="scope">
-              <el-popover trigger="hover" placement="top">
-                <p>姓名: {{ scope.row.name }}</p>
-                <p>住址: {{ scope.row.address }}</p>
-                <div slot="reference" class="name-wrapper">
-                  <el-tag size="medium">{{ scope.row.name }}</el-tag>
-                </div>
-              </el-popover>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                @click="handleEdit(scope.$index, scope.row)"
-              >编辑</el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button>
-            </template>
-          </el-table-column>
+          <el-table-column prop="tagName" label="姓名" width="120" />
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click.native.prevent="deleteRow(scope.$index, tableData)">
+              移除
+            </el-button>
+          </template>
         </el-table>
-      </template>
-    </div>
-    <div class="all-tag">所有标签</div>
-  </div>
+      </el-main>
+    </el-container>
+    <el-aside width="40%" style="background-color: rgb(238, 241, 246)" />
+  </el-container>
 </template>
 
 <script>
@@ -62,37 +38,8 @@ export default {
   },
   data() {
     return {
-      list: null,
-      listLoading: true,
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1517 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1519 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1516 弄',
-        zip: 200333
-      }]
+      keyword: '',
+      tableData: []
     }
   },
   created() {
@@ -102,7 +49,8 @@ export default {
     fetchData() {
       this.listLoading = true
       getList().then(response => {
-        this.list = response.data.items
+        this.tableData = response.data
+        console.log(this.tableData)
         this.listLoading = false
       })
     }
@@ -110,7 +58,12 @@ export default {
 }
 </script>
 <style scoped>
-.tag {
-  display:inline
+.el-header {
+  background-color: #b3c0d1;
+  color: #333;
+  line-height: 60px;
+}
+.el-aside {
+  color: #333;
 }
 </style>
