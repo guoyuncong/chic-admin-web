@@ -1,10 +1,18 @@
 import request from '@/utils/request'
 
-export function getList(params) {
+export function getTagList(params) {
   return request({
     url: '/post/tag/list',
     method: 'get',
     params
+  })
+}
+
+export function addTag(data) {
+  return request({
+    url: '/post/tag/save',
+    method: 'post',
+    data
   })
 }
 
