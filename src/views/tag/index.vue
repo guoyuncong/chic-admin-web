@@ -31,7 +31,7 @@
       </el-button>
     </el-aside>
     <!-- 新增/编辑标签 -->
-    <addEditDialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" />
+    <addEditDialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
   </el-container>
 </template>
 
@@ -113,9 +113,9 @@ export default {
           tagIds: [row.tagId]
         }).then(response => {
           this.deleteTagDialogVisible = false
+          this.fetchData
         })
       })
-      this.fetchData
     }
   }
 }
