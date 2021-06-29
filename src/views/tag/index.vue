@@ -5,29 +5,21 @@
         <el-col :span="5">
           <el-input v-model="keyword" clearable />
         </el-col>
-        <el-button class="searchBtn" type="primary" icon="el-icon-search">搜索</el-button>
-        <svg-icon class="plusIcon" icon-class="plus" @click="dialogFormVisible = true" />
+        <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="fetchData()">搜索</el-button>
+        <svg-icon class="plusIcon" icon-class="plus" @click="addTagFormDialogVisible = true" />
       </el-header>
       <el-main>
         <el-table :data="tableData" height="578px">
           <el-table-column align="center" prop="tagName" label="标签名称" />
-          <el-table-column align="center" prop="abbr" label="标签简称" />
           <el-table-column align="center" prop="createTime" label="时间">
             <template slot-scope="scope">
-              <span>{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
+              <span v-if="scope.row.createTime != null">{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
             </template>
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作">
             <template slot-scope="scope">
               <el-button size="mini" @click="updateTagFormDialogVisible = true">编辑</el-button>
-              <el-button size="mini" type="danger" @click="deleteTagDialogVisible = true">删除</el-button>
-              <el-dialog title="提示" :visible.sync="deleteTagDialogVisible" width="30%" :before-close="handleClose">
-                <span>这是一段信息</span>
-                <span slot="footer" class="dialog-footer">
-                  <el-button @click="deleteTagDialogVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="handleDelete(scope.$index, scope.row)">确 定</el-button>
-                </span>
-              </el-dialog>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -44,9 +36,6 @@
         <el-form-item label="标签名称" label-width="100px">
           <el-input v-model="form.name" size="small" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="标签简称" label-width="100px">
-          <el-input v-model="form.abbr" size="small" autocomplete="off" />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addTagFormDialogVisible = false">取 消</el-button>
@@ -59,15 +48,11 @@
         <el-form-item label="标签名称" label-width="100px">
           <el-input v-model="form.name" size="small" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="标签简称" label-width="100px">
-          <el-input v-model="form.abbr" size="small" autocomplete="off" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="updateTagFormDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEdit()">确 定</el-button>
-      </div>
-    </el-dialog>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="updateTagFormDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleEdit()">确 定</el-button>
+        </div>
+      </el-form></el-dialog>
   </el-container>
 </template>
 
@@ -96,15 +81,12 @@ export default {
       tableData: null,
       // 查询关键字
       keyword: '',
-      // 添加标签弹框
+      // 添加标签弹框标识
       addTagFormDialogVisible: false,
-      // 删除标签弹框
-      deleteTagDialogVisible: false,
-      // 更新标签弹框
+      // 更新标签弹框标识
       updateTagFormDialogVisible: false,
       form: {
         tagName: '',
-        abbr: '',
         tagId: ''
       }
     }
@@ -113,40 +95,47 @@ export default {
     this.fetchData()
   },
   methods: {
+    // 按钮随机类型，类型不同颜色不同
     btnType() {
       return ['primary', 'success', 'warning', 'danger', 'info'][Math.floor((Math.random() * 4))]
     },
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
-    },
+    // 标签列表
     fetchData() {
-      getTagList().then(response => {
+      getTagList({
+        keyword: this.keyword
+      }).then(response => {
         this.tableData = response.data
       })
     },
-    handleEdit(index, row) {
-
-    },
-    handleDelete(index, row) {
-      deleteTag({
-        tagIds: [row.tagId]
-      }).then(response => {
-        this.deleteTagDialogVisible = false
-      })
-    },
+    // 添加标签
     handleAdd() {
       if (this.form.name != null) {
         addTag({
-          tagName: this.form.name,
-          abbr: this.form.abbr
+          tagName: this.form.name
         }).then(response => {
-          this.addTagFormDialogVisible = false
+          this.fetchData()
         })
       }
+      this.addTagFormDialogVisible = false
+    },
+    // 更新标签
+    handleEdit(index, row) {
+
+    },
+    // 删除标签
+    handleDelete(index, row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(
+        deleteTag({
+          tagIds: [row.tagId]
+        }).then(response => {
+          this.deleteTagDialogVisible = false
+          this.fetchData()
+        })
+      )
     }
   }
 }
