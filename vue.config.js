@@ -29,7 +29,7 @@ module.exports = {
     // 代理
     proxy: {
       'api/post': {
-        target: 'http://127.0.0.1:8080',
+        target: 'http://47.99.184.240:8889/',
         changeOrigin: true,
         pathRewrite: {
           '/api': ''
