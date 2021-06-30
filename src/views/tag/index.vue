@@ -11,7 +11,7 @@
       <el-main>
         <el-table :data="tableData" height="578px">
           <el-table-column align="center" prop="tagName" label="标签名称" />
-          <el-table-column align="center" prop="createTime" label="时间">
+          <el-table-column align="center" prop="createTime" label="创建时间">
             <template slot-scope="scope">
               <span v-if="scope.row.createTime != null">{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
             </template>
@@ -37,8 +37,7 @@
 
 <script>
 import { getTagList, deleteTag } from '@/api/tag'
-import addEditDialog from '../../components/Tag/addEditDialog'
-
+import addEditDialog from '@/components/Tag'
 import { formatDate } from '@/utils/formatDate'
 
 export default {
@@ -65,13 +64,10 @@ export default {
       tableData: null,
       // 查询关键字
       keyword: '',
-      form: {
-        tagName: '',
-        tagId: ''
-      },
       // 添加/编辑标签弹框标识
       addEditVisible: false,
       dialogType: 'add',
+      // 行数据
       rowInfo: {}
     }
   },
@@ -104,7 +100,7 @@ export default {
     },
     // 删除标签
     handleDelete(index, row) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      this.$confirm('此操作将永久标签, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -113,7 +109,7 @@ export default {
           tagIds: [row.tagId]
         }).then(response => {
           this.deleteTagDialogVisible = false
-          this.fetchData
+          this.fetchData()
         })
       })
     }
