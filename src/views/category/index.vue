@@ -35,7 +35,7 @@ import Pagination from '@/components/Pagination'
 import TreeCategory from '@/components/Category/TreeCategory'
 
 export default {
-  name: 'ArticleList',
+  name: 'Category',
   components: {
     Pagination,
     TreeCategory
