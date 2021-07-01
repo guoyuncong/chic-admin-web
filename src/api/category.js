@@ -17,27 +17,27 @@ export function treeCategory(params) {
   })
 }
 // 新增分类
-export function addCategory(params) {
+export function addCategory(data) {
   return request({
     url: '/post/category/save',
     method: 'post',
-    params
+    data
   })
 }
 // 更新分类
-export function updateCategory(params) {
+export function updateCategory(data) {
   return request({
     url: '/post/category/update',
     method: 'post',
-    params
+    data
   })
 }
 // 删除分类
-export function deleteCategory(params) {
+export function deleteCategory(data) {
   return request({
     url: '/post/category/delete',
     method: 'post',
-    params
+    data
   })
 }
 

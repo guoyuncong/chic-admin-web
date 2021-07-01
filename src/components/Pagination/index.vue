@@ -32,7 +32,7 @@ export default {
     // 每页显示条数
     size: {
       type: Number,
-      default: 20
+      default: 10
     },
     // 组件布局，子组件名用逗号分隔
     layout: {
@@ -96,7 +96,8 @@ export default {
 <style scoped>
 .pagination-container {
   background: #fff;
-  padding: 32px 16px;
+  padding: 30px 15px;
+  float: right;
 }
 .pagination-container.hidden {
   display: none;

@@ -108,7 +108,6 @@ export default {
         deleteTag({
           tagIds: [row.tagId]
         }).then(response => {
-          this.deleteTagDialogVisible = false
           this.fetchData()
         })
       })
