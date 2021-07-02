@@ -30,7 +30,7 @@
 
 <script>
 import { pageCategory } from '@/api/category'
-import { formatDate } from '@/utils/formatDate'
+import { formatDate } from '@/utils/format-date'
 import Pagination from '@/components/Pagination'
 import TreeCategory from '@/components/Category/TreeCategory'
 

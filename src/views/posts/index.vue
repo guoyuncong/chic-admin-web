@@ -6,7 +6,7 @@
           <el-input v-model="pageQuery.keyword" clearable />
         </el-col>
         <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
-        <svg-icon class="plusIcon" icon-class="plus" />
+        <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
       </el-header>
       <el-main>
         <el-table :data="tableData">
@@ -24,12 +24,14 @@
           <el-table-column align="center" fixed="right" label="操作">
             <template slot-scope="scope">
               <el-button size="mini">编辑</el-button>
-              <el-button size="mini" type="danger">删除</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <!-- 分页 -->
         <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
+        <!-- 新增/编辑文章 -->
+        <add-edit-dialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
       </el-main>
     </el-container>
   </el-container>
@@ -37,13 +39,15 @@
 
 <script>
 import { pagePost } from '@/api/post'
-import { formatDate } from '@/utils/formatDate'
+import { formatDate } from '@/utils/format-date'
 import Pagination from '@/components/Pagination'
+import addEditDialog from '@/components/Post/AddEditDialog'
 
 export default {
   name: 'Posts',
   components: {
-    Pagination
+    Pagination,
+    addEditDialog
   },
   filters: {
     statusFilter(status) {
@@ -69,13 +73,30 @@ export default {
         size: 10
       },
       // 总条数
-      total: 0
+      total: 0,
+      // 新增/编辑文章标识
+      addEditVisible: false,
+      dialogType: 'add',
+      // 选中行数据
+      rowInfo: {},
+      direction: 'rtl'
     }
   },
   created() {
     this.fetchData()
   },
   methods: {
+    // 添加标签弹框控制
+    addDialog() {
+      this.dialogType = 'add'
+      this.addEditVisible = true
+    },
+    // 编辑标签弹窗控制
+    editDialog(row) {
+      this.dialogType = 'edit'
+      this.addEditVisible = true
+      this.rowInfo = row
+    },
     // 分类列表
     fetchData() {
       pagePost(this.pageQuery).then(response => {
@@ -90,6 +111,9 @@ export default {
         this.tableData = response.data.records
         this.total = response.data.total
       })
+    },
+    handleDelete(row) {
+
     }
   }
 }

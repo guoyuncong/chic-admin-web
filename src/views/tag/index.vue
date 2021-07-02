@@ -31,19 +31,19 @@
       </el-button>
     </el-aside>
     <!-- 新增/编辑标签 -->
-    <addEditDialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
+    <add-edit-dialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
   </el-container>
 </template>
 
 <script>
 import { getTagList, deleteTag } from '@/api/tag'
-import addEditDialog from '@/components/Tag'
-import { formatDate } from '@/utils/formatDate'
+import AddEditDialog from '@/components/Tag'
+import { formatDate } from '@/utils/format-date'
 
 export default {
   name: 'Tag',
   components: {
-    addEditDialog
+    AddEditDialog
   },
   filters: {
     statusFilter(status) {
