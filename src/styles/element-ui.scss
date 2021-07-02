@@ -19,15 +19,28 @@
 .el-button {
   font-family: Times New Roman, 楷体, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
-
 .el-submenu__title {
   font-size: 18px;
 }
-
 .el-menu-item {
   font-size: 16px;
 }
-
+.el-form-item__label {
+  font-size: 16px;
+  font-weight: normal;
+}
+.el-textarea__inner {
+  font-size: 16px;
+  font-family: Times New Roman, 楷体, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+.el-input__inner {
+  font-size: 16px;
+  font-family: Times New Roman, 楷体, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+.el-table {
+  font-size: 16px;
+  font-family: Times New Roman, 楷体, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
   transform: none;

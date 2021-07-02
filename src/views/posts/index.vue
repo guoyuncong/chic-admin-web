@@ -90,6 +90,7 @@ export default {
     addDialog() {
       this.dialogType = 'add'
       this.addEditVisible = true
+      console.log(this.addEditVisible)
     },
     // 编辑标签弹窗控制
     editDialog(row) {
