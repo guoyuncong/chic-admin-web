@@ -1,34 +1,11 @@
 <template>
   <div>
     <!-- 弹框：添加分类-->
-    <el-dialog title="新增分类" :visible.sync="addCategoryVisible" width="30%" @close="close">
+    <el-dialog :title="dialogType ==='add' ? '新增分类': '编辑分类'" :visible.sync="addEditVisible" width="30%" @close="close">
       <el-form ref="form">
-        <el-form-item label="父级分类" label-width="100px">
-          <el-input v-model="formData.categoryName" size="small" autocomplete="off" :disabled="true" />
+        <el-form-item v-if="dialogType ==='add'" label="父级分类" label-width="100px">
+          <el-input v-model="categoryName" size="small" autocomplete="off" :disabled="true" />
         </el-form-item>
-        <el-form-item label="名称" label-width="100px">
-          <el-input v-model="categoryName" size="small" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="别名" label-width="100px">
-          <el-input v-model="alias" size="small" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="描述" label-width="100px">
-          <el-input v-model="description" size="small" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="排序" label-width="100px">
-          <el-select v-model="sort" placeholder="请选择">
-            <el-option v-for="item in options" :key="item" :value="item" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleAdd()">确 定</el-button>
-      </div>
-    </el-dialog>
-    <!-- 弹框：更新分类-->
-    <el-dialog title="编辑分类" :visible.sync="editCategoryVisible" width="30%" @close="close">
-      <el-form ref="form">
         <el-form-item label="名称" label-width="100px">
           <el-input v-model="formData.categoryName" size="small" autocomplete="off" />
         </el-form-item>
@@ -45,8 +22,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editVisible = false">取 消</el-button>
-        <el-button type="primary" @click="handleEdit()">确定</el-button>
+        <el-button @click="addVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAddEdit()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -58,15 +35,15 @@ import { addCategory, updateCategory } from '@/api/category'
 export default {
   name: 'AddEditDialog',
   props: {
-    // 新增可见标识
-    addVisible: {
+    // 新增/编辑可见标识
+    visible: {
       type: Boolean,
       default: false
     },
-    // 编辑标识
-    editVisible: {
-      type: Boolean,
-      default: false
+    // 表单类型：新增/编辑
+    dialogType: {
+      type: String,
+      default: 'add'
     },
     // 表格行数据
     rowInfo: {
@@ -76,15 +53,10 @@ export default {
   },
   data() {
     return {
-      // 新增分类弹框标识
-      addCategoryVisible: false,
-      // 更新分类弹框标识
-      editCategoryVisible: false,
+      // 新增/更新分类弹框标识
+      addEditVisible: false,
       // 自身数据
       categoryName: '',
-      alias: '',
-      description: '',
-      sort: '',
       // 父组件中数据
       formData: {
         categoryId: '',
@@ -98,16 +70,17 @@ export default {
     }
   },
   watch: {
-    addVisible: {
+    visible: {
       handler(val) {
-        this.addCategoryVisible = val
-        this.formData = JSON.parse(JSON.stringify(this.rowInfo))
-      }
-    },
-    editVisible: {
-      handler(val) {
-        this.editCategoryVisible = val
-        this.formData = JSON.parse(JSON.stringify(this.rowInfo))
+        this.addEditVisible = val
+        if (val && this.dialogType === 'add') {
+          this.formData = JSON.parse(JSON.stringify(this.rowInfo))
+          this.categoryName = this.formData.categoryName
+          this.formData = {}
+        }
+        if (val && this.dialogType === 'edit') {
+          this.formData = JSON.parse(JSON.stringify(this.rowInfo))
+        }
       }
     }
   },
@@ -115,40 +88,38 @@ export default {
     // 弹框关闭
     close() {
       this.$refs.form.resetFields()
-      this.addVisible = false
-      this.editVisible = false
+      this.addEditVisible = false
       this.formData = this.$options.data.call(this).formData
-      this.$emit('update:addVisible', this.addVisible)
-      this.$emit('update:editVisible', this.editVisible)
+      this.$emit('update:visible', this.addEditVisible)
     },
-    // 新增分类
-    handleAdd() {
-      addCategory({
-        parentId: this.formData.categoryId,
-        categoryName: this.categoryName,
-        alias: this.alias,
-        description: this.description,
-        sort: this.sort
-      }).then(() => {
-        this.$refs.form.resetFields()
-        this.addVisible = false
-        this.$emit('update:addVisible', this.addVisible)
-        this.$emit('reload')
-      })
-    },
-    // 编辑分类
-    handleEdit() {
-      updateCategory({
-        categoryId: this.formData.categoryId,
-        categoryName: this.formData.categoryName,
-        alias: this.alias,
-        sort: this.formData.sort,
-        description: this.formData.description
-      }).then(() => {
-        this.editVisible = false
-        this.$emit('update:updateVisible', this.editVisible)
-        this.$emit('reload')
-      })
+    // 新增/编辑分类
+    handleAddEdit() {
+      if (this.dialogType === 'add') {
+        addCategory({
+          parentId: this.formData.categoryId,
+          categoryName: this.categoryName,
+          alias: this.alias,
+          description: this.description,
+          sort: this.sort
+        }).then(() => {
+          this.$refs.form.resetFields()
+          this.addCategoryVisible = false
+          this.$emit('update:addVisible', this.addVisible)
+          this.$emit('reload')
+        })
+      } else {
+        updateCategory({
+          categoryId: this.formData.categoryId,
+          categoryName: this.formData.categoryName,
+          alias: this.alias,
+          sort: this.formData.sort,
+          description: this.formData.description
+        }).then(() => {
+          this.editCategoryVisible = false
+          this.$emit('update:updateVisible', this.editVisible)
+          this.$emit('reload')
+        })
+      }
     }
   }
 }

@@ -18,7 +18,7 @@
       </span>
     </el-tree>
     <!-- 新增/编辑分类 -->
-    <addEditDialog :add-visible.sync="addVisible" :edit-visible.sync="editVisible" :row-info="rowInfo" @reload="fetchData" />
+    <addEditDialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
   </div>
 </template>
 
@@ -40,10 +40,9 @@ export default {
         children: 'child',
         label: 'categoryName'
       },
-      // 添加分类弹框标识
-      addVisible: false,
-      // 添加分类弹框标识
-      editVisible: false,
+      // 添加/编辑分类弹框标识
+      addEditVisible: false,
+      dialogType: 'add',
       // 行数据
       rowInfo: {}
     }
@@ -54,14 +53,14 @@ export default {
   methods: {
     // 添加分类弹框控制
     addDialog(data) {
-      this.addVisible = true
-      this.editVisible = false
+      this.addEditVisible = true
+      this.dialogType = 'add'
       this.rowInfo = data
     },
     // 编辑分类弹窗控制
     editDialog(data) {
-      this.editVisible = true
-      this.addVisible = false
+      this.addEditVisible = true
+      this.dialogType = 'edit'
       this.rowInfo = data
     },
     // 分类树结构

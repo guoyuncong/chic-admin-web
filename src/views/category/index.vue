@@ -30,7 +30,7 @@
     </el-col>
     <el-col :span="9">
       <div class="category-aside">
-        <TreeCategory @reload="fetchData" />
+        <tree-category @reload="fetchData" />
       </div>
     </el-col>
   </el-row>
