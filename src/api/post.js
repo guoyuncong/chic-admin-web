@@ -25,4 +25,11 @@ export function updatePost(data) {
     data
   })
 }
-
+// 文章详情
+export function detailPost(params) {
+  return request({
+    url: '/post/detail',
+    method: 'get',
+    params
+  })
+}

@@ -13,7 +13,6 @@
           <el-table-column align="center" prop="title" label="标题" />
           <el-table-column align="center" prop="abbr" label="别名" />
           <el-table-column align="center" prop="status" label="状态" />
-          <el-table-column align="center" prop="status" label="状态" />
           <el-table-column align="center" prop="visitNum" label="访问次数" />
           <el-table-column align="center" prop="updateNum" label="修改次数" />
           <el-table-column align="center" prop="publishTime" label="发布时间">
@@ -23,9 +22,11 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作">
             <template slot-scope="scope">
-              <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
-              <el-button size="mini">设置</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
+              <div style="display: flex; width:100px">
+                <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
+                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
+                <el-button size="mini">设置</el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -118,7 +119,7 @@ export default {
     writePost(abbr) {
       this.$router.push({
         path: '/posts/write',
-        query: { postId: abbr }
+        query: { abbr: abbr }
       })
     },
     handleDelete(row) {
