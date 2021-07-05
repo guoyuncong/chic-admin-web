@@ -19,12 +19,12 @@
           </el-col>
         </el-form-item>
         <el-form-item label="开启评论" label-width="100px">
-          <el-radio v-model="formData.commentFlag" label="true">开启</el-radio>
-          <el-radio v-model="formData.commentFlag" label="false">关闭</el-radio>
+          <el-radio v-model="formData.commentFlag" :label="true">开启</el-radio>
+          <el-radio v-model="formData.commentFlag" :label="false">关闭</el-radio>
         </el-form-item>
         <el-form-item label="是否置顶" label-width="100px">
-          <el-radio v-model="formData.topFlag" label="true">是</el-radio>
-          <el-radio v-model="formData.topFlag" label="false">否</el-radio>
+          <el-radio v-model="formData.topFlag" :label="true">是</el-radio>
+          <el-radio v-model="formData.topFlag" :label="false">否</el-radio>
         </el-form-item>
         <el-form-item label="分类目录" label-width="100px">
           <el-tree
@@ -39,7 +39,8 @@
           >
             <span slot-scope="{ node }" class="custom-tree-node">
               <span>{{ node.label }}</span>
-            </span></el-tree>
+            </span>
+          </el-tree>
         </el-form-item>
         <el-form-item label="选择标签" label-width="100px">
           <el-select v-model="tagIds" multiple clearable placeholder="请选择">
@@ -129,6 +130,7 @@ export default {
         this.addEditVisible = val
         if (val && this.dialogType === 'edit') {
           this.formData = JSON.parse(JSON.stringify(this.rowInfo))
+          console.log(this.formData)
         }
       }
     }

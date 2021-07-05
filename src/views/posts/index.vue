@@ -26,7 +26,7 @@
                 <div style="display: flex; width:100px">
                   <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
                   <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
-                  <el-button size="mini">设置</el-button>
+                  <el-button size="mini" @click="setPost(scope.row)">设置</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -45,7 +45,7 @@
 import { pagePost } from '@/api/post'
 import { formatDate } from '@/utils/format-date'
 import Pagination from '@/components/Pagination'
-import addEditDialog from '@/components/Post/AddEditDialog'
+import addEditDialog from '@/components/Post'
 
 export default {
   name: 'Posts',
@@ -123,6 +123,12 @@ export default {
         path: '/posts/write',
         query: { abbr: abbr }
       })
+    },
+    // 设置文章属性
+    setPost(row) {
+      this.addEditVisible = true
+      this.dialogType = 'edit'
+      this.rowInfo = row
     },
     handleDelete(row) {
 
