@@ -1,42 +1,44 @@
 <template>
-  <el-container style="height: 100%; border: 1px solid #eee">
-    <el-container>
-      <el-header style="font-size: 12px" :inline="true">
-        <el-col :span="5">
-          <el-input v-model="pageQuery.keyword" clearable />
-        </el-col>
-        <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
-        <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
-      </el-header>
-      <el-main>
-        <el-table :data="tableData">
-          <el-table-column align="center" prop="title" label="标题" />
-          <el-table-column align="center" prop="abbr" label="别名" />
-          <el-table-column align="center" prop="status" label="状态" />
-          <el-table-column align="center" prop="visitNum" label="访问次数" />
-          <el-table-column align="center" prop="updateNum" label="修改次数" />
-          <el-table-column align="center" prop="publishTime" label="发布时间">
-            <template slot-scope="scope">
-              <span v-if="scope.row.publishTime != null">{{ scope.row.publishTime | formatDate(scope.row.publishTime, 'yyyy-MM-dd') }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column align="center" fixed="right" label="操作">
-            <template slot-scope="scope">
-              <div style="display: flex; width:100px">
-                <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
-                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
-                <el-button size="mini">设置</el-button>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 分页 -->
-        <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
-        <!-- 新增/编辑文章 -->
-        <add-edit-dialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
-      </el-main>
+  <div class="post-container">
+    <el-container style="height: 100%; border: 1px solid #eee">
+      <el-container>
+        <el-header style="font-size: 12px" :inline="true">
+          <el-col :span="5">
+            <el-input v-model="pageQuery.keyword" clearable />
+          </el-col>
+          <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
+          <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
+        </el-header>
+        <el-main>
+          <el-table :data="tableData">
+            <el-table-column align="center" prop="title" label="标题" />
+            <el-table-column align="center" prop="abbr" label="别名" />
+            <el-table-column align="center" prop="status" label="状态" />
+            <el-table-column align="center" prop="visitNum" label="访问次数" />
+            <el-table-column align="center" prop="updateNum" label="修改次数" />
+            <el-table-column align="center" prop="publishTime" label="发布时间">
+              <template slot-scope="scope">
+                <span v-if="scope.row.publishTime != null">{{ scope.row.publishTime | formatDate(scope.row.publishTime, 'yyyy-MM-dd') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" fixed="right" label="操作">
+              <template slot-scope="scope">
+                <div style="display: flex; width:100px">
+                  <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
+                  <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
+                  <el-button size="mini">设置</el-button>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 分页 -->
+          <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
+          <!-- 新增/编辑文章 -->
+          <add-edit-dialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
+        </el-main>
+      </el-container>
     </el-container>
-  </el-container>
+  </div>
 </template>
 
 <script>
@@ -130,6 +132,9 @@ export default {
 </script>
 
 <style scoped>
+.post-container {
+  background-color: white;
+}
 .edit-input {
   padding-right: 100px;
 }

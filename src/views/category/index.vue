@@ -1,31 +1,35 @@
 <template>
-  <el-container style="height: 100%; border: 1px solid #eee">
-    <el-container>
-      <el-header style="font-size: 12px" :inline="true">
-        <el-col :span="5">
-          <el-input v-model="pageQuery.keyword" clearable />
-        </el-col>
-        <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
-      </el-header>
-      <el-main>
-        <el-table :data="tableData">
-          <el-table-column align="center" prop="categoryName" label="分类名称" />
-          <el-table-column align="center" prop="alias" label="别名" />
-          <el-table-column align="center" prop="description" label="描述" />
-          <el-table-column align="center" prop="createTime" label="创建时间">
-            <template slot-scope="scope">
-              <span v-if="scope.row.createTime != null">{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-        <!-- 分页 -->
-        <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
-      </el-main>
-    </el-container>
-    <el-aside style="width: 30%; font-size: 18px;">
+  <div>
+    <div class="category-container">
+      <el-container style="height: 100%; border: 1px solid #eee">
+        <el-container>
+          <el-header style="font-size: 12px" :inline="true">
+            <el-col :span="5">
+              <el-input v-model="pageQuery.keyword" clearable />
+            </el-col>
+            <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
+          </el-header>
+          <el-main>
+            <el-table :data="tableData">
+              <el-table-column align="center" prop="categoryName" label="分类名称" />
+              <el-table-column align="center" prop="alias" label="别名" />
+              <el-table-column align="center" prop="description" label="描述" />
+              <el-table-column align="center" prop="createTime" label="创建时间">
+                <template slot-scope="scope">
+                  <span v-if="scope.row.createTime != null">{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+            <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
+          </el-main>
+        </el-container>
+      </el-container>
+    </div>
+    <div class="category-aside">
       <TreeCategory @reload="fetchData" />
-    </el-aside>
-  </el-container>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -91,6 +95,27 @@ export default {
 </script>
 
 <style scoped>
+.category-container {
+  margin-top: 10px;
+  width: 60%;
+  float:left;
+  display: inline;
+  background-color: white;
+  min-height: calc(100vh - 50px);
+  border-radius:30px 30px 30px 30px;
+}
+.category-aside {
+  min-height: calc(100vh - 50px);
+  width: 38%;
+  height: 100%;
+  margin-top: 10px;
+  float:left;
+  display: inline;
+  margin-left: 20px;
+  background-color: rgb(238, 241, 246);
+  border-radius: 30px 30px 30px 30px;
+  background-color: white;
+}
 .edit-input {
   padding-right: 100px;
 }
