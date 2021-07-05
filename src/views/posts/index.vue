@@ -23,8 +23,9 @@
           </el-table-column>
           <el-table-column align="center" fixed="right" label="操作">
             <template slot-scope="scope">
-              <el-button size="mini">编辑</el-button>
-              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
+              <el-button size="mini">设置</el-button>
+              <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -111,6 +112,13 @@ export default {
       pagePost(this.pageQuery).then(response => {
         this.tableData = response.data.records
         this.total = response.data.total
+      })
+    },
+    // 编辑文章内容
+    writePost(abbr) {
+      this.$router.push({
+        path: '/posts/write',
+        query: { postId: abbr }
       })
     },
     handleDelete(row) {

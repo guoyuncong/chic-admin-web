@@ -38,6 +38,10 @@ export const constantRoutes = [
         meta: { title: '文章', icon: 'tree' }
       },
       {
+        path: 'write',
+        component: () => import('@/views/markdown/index')
+      },
+      {
         path: 'category',
         name: 'Category',
         component: () => import('@/views/category/index'),
