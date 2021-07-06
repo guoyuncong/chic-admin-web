@@ -18,7 +18,7 @@
             <el-table-column align="center" prop="updateNum" label="修改次数" />
             <el-table-column align="center" prop="publishTime" label="发布时间">
               <template slot-scope="scope">
-                <span v-if="scope.row.publishTime != null">{{ scope.row.publishTime | formatDate(scope.row.publishTime, 'yyyy-MM-dd') }}</span>
+                <span>{{ scope.row.publishTime }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" fixed="right" label="操作">
@@ -26,7 +26,7 @@
                 <div style="display: flex; width:100px">
                   <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
                   <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
-                  <el-button size="mini" @click="setPost(scope.row)">设置</el-button>
+                  <el-button size="mini" @click="setPost(scope.row.postId)">设置</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -34,7 +34,7 @@
           <!-- 分页 -->
           <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
           <!-- 新增/编辑文章 -->
-          <add-edit-dialog :visible.sync="addEditVisible" :dialog-type="dialogType" :row-info="rowInfo" @reload="fetchData" />
+          <add-edit-dialog :visible.sync="addEditVisible" :dialog-type="dialogType" :post-id="postId" @reload="fetchData" />
         </el-main>
       </el-container>
     </el-container>
@@ -43,7 +43,6 @@
 
 <script>
 import { pagePost } from '@/api/post'
-import { formatDate } from '@/utils/format-date'
 import Pagination from '@/components/Pagination'
 import addEditDialog from '@/components/Post'
 
@@ -61,9 +60,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    formatDate(value) {
-      return formatDate(value, 'yyyy-MM-dd')
     }
   },
   data() {
@@ -81,8 +77,8 @@ export default {
       // 新增/编辑文章标识
       addEditVisible: false,
       dialogType: 'add',
-      // 选中行数据
-      rowInfo: {},
+      // 选中行文章ID
+      postId: '',
       direction: 'rtl'
     }
   },
@@ -94,13 +90,6 @@ export default {
     addDialog() {
       this.dialogType = 'add'
       this.addEditVisible = true
-      console.log(this.addEditVisible)
-    },
-    // 编辑标签弹窗控制
-    editDialog(row) {
-      this.dialogType = 'edit'
-      this.addEditVisible = true
-      this.rowInfo = row
     },
     // 分类列表
     fetchData() {
@@ -125,10 +114,10 @@ export default {
       })
     },
     // 设置文章属性
-    setPost(row) {
+    setPost(postId) {
       this.addEditVisible = true
       this.dialogType = 'edit'
-      this.rowInfo = row
+      this.postId = postId
     },
     handleDelete(row) {
 

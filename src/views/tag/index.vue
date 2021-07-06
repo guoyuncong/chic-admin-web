@@ -16,7 +16,7 @@
                 <el-table-column align="center" prop="tagName" label="标签名称" />
                 <el-table-column align="center" prop="createTime" label="创建时间">
                   <template slot-scope="scope">
-                    <span v-if="scope.row.createTime != null">{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
+                    <span>{{ scope.row.createTime }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column align="center" fixed="right" label="操作">
@@ -46,7 +46,6 @@
 <script>
 import { getTagList, deleteTag } from '@/api/tag'
 import AddEditDialog from '@/components/Tag'
-import { formatDate } from '@/utils/format-date'
 
 export default {
   name: 'Tag',
@@ -61,9 +60,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    formatDate(value) {
-      return formatDate(value, 'yyyy-MM-dd')
     }
   },
   data() {

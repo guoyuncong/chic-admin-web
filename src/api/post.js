@@ -17,10 +17,10 @@ export function addPost(data) {
     data
   })
 }
-// 编辑文章
-export function updatePost(data) {
+// 设置文章
+export function setPost(data) {
   return request({
-    url: '/post/update',
+    url: '/post/set',
     method: 'post',
     data
   })

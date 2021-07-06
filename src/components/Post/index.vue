@@ -6,7 +6,7 @@
     :before-close="handleClose"
   >
     <div class="post-drawer__content">
-      <el-form :model="formData">
+      <el-form ref="form" :model="formData">
         <el-form-item label="标题" label-width="100px">
           <el-input v-model="formData.title" autocomplete="off" />
         </el-form-item>
@@ -15,7 +15,7 @@
         </el-form-item>
         <el-form-item label="发表时间" label-width="100px">
           <el-col :span="11">
-            <el-date-picker v-model="formData.publishTime" type="date" placeholder="选择日期" style="width: 100%;" />
+            <el-date-picker v-model="formData.publishTime" type="datetime" placeholder="选择日期" style="width: 100%;" />
           </el-col>
         </el-form-item>
         <el-form-item label="开启评论" label-width="100px">
@@ -27,20 +27,24 @@
           <el-radio v-model="formData.topFlag" :label="false">否</el-radio>
         </el-form-item>
         <el-form-item label="分类目录" label-width="100px">
-          <el-tree
-            ref="tree"
-            :data="categoryTreeData"
-            :props="defaultProps"
-            node-key="categoryId"
-            default-expand-all
-            highlight-current
-            show-checkbox
-            draggable
-          >
-            <span slot-scope="{ node }" class="custom-tree-node">
-              <span>{{ node.label }}</span>
-            </span>
-          </el-tree>
+          <div class="treeCategory">
+            <el-tree
+              ref="tree"
+              :default-checked-keys="categoryIds"
+              :data="categoryTreeData"
+              :props="defaultProps"
+              node-key="categoryId"
+              default-expand-all
+              highlight-current
+              show-checkbox
+              draggable
+              render-after-expand
+            >
+              <span slot-scope="{ node }" class="custom-tree-node">
+                <span>{{ node.label }}</span>
+              </span>
+            </el-tree>
+          </div>
         </el-form-item>
         <el-form-item label="选择标签" label-width="100px">
           <el-select v-model="tagIds" multiple clearable placeholder="请选择">
@@ -75,7 +79,7 @@
 <script>
 import { treeCategory } from '@/api/category'
 import { getTagList } from '@/api/tag'
-import { addPost, updatePost } from '@/api/post'
+import { addPost, setPost, detailPost } from '@/api/post'
 
 export default {
   name: 'AddEditDialog',
@@ -91,9 +95,9 @@ export default {
       default: 'add'
     },
     // 表格行数据
-    rowInfo: {
-      type: Object,
-      default: () => { }
+    postId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -108,7 +112,15 @@ export default {
         commentFlag: '',
         topFlag: '',
         digest: '',
-        keywords: ''
+        keywords: '',
+        categories: {
+          categoryId: '',
+          categoryName: ''
+        },
+        tags: {
+          tagId: '',
+          tagName: ''
+        }
       },
       // 选中的标签
       tagIds: [],
@@ -129,8 +141,17 @@ export default {
       handler(val) {
         this.addEditVisible = val
         if (val && this.dialogType === 'edit') {
-          this.formData = JSON.parse(JSON.stringify(this.rowInfo))
-          console.log(this.formData)
+          detailPost({
+            postId: this.postId
+          }).then((response) => {
+            this.formData = response.data
+            this.categoryIds = this.formData.categories.map(item => {
+              return item.categoryId
+            })
+            this.tagIds = this.formData.tags.map(item => {
+              return item.tagId
+            })
+          })
         }
       }
     }
@@ -178,11 +199,24 @@ export default {
         }).then(() => {
           this.addEditVisible = false
           this.$emit('reload')
+          this.$refs.form.resetFields()
         })
       } else {
-        updatePost(this.formData).then(() => {
+        setPost({
+          postId: this.formData.postId,
+          title: this.formData.title,
+          abbr: this.formData.abbr,
+          publishTime: this.formData.publishTime,
+          commentFlag: this.formData.commentFlag,
+          topFlag: this.formData.topFlag,
+          digest: this.formData.digest,
+          keywords: this.formData.keywords,
+          tagIds: this.tagIds,
+          categoryIds: this.$refs.tree.getCheckedKeys()
+        }).then(() => {
           this.addEditVisible = false
           this.$emit('reload')
+          this.$refs.form.resetFields()
         })
       }
     }
@@ -192,6 +226,10 @@ export default {
 </script>
 
 <style scoped>
+.treeCategory {
+  align-items: center;
+  margin-top: 9px;
+}
 .post-drawer__content {
   margin-right: 10px;
 }

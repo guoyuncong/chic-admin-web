@@ -17,7 +17,7 @@
                 <el-table-column align="center" prop="description" label="描述" />
                 <el-table-column align="center" prop="createTime" label="创建时间">
                   <template slot-scope="scope">
-                    <span v-if="scope.row.createTime != null">{{ scope.row.createTime | formatDate(scope.row.createTime, 'yyyy-MM-dd') }}</span>
+                    <span>{{ scope.row.createTime }}</span>
                   </template>
                 </el-table-column>
               </el-table>
@@ -38,7 +38,6 @@
 
 <script>
 import { pageCategory } from '@/api/category'
-import { formatDate } from '@/utils/format-date'
 import Pagination from '@/components/Pagination'
 import TreeCategory from '@/components/Category/TreeCategory'
 
@@ -56,9 +55,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    formatDate(value) {
-      return formatDate(value, 'yyyy-MM-dd')
     }
   },
   data() {
