@@ -3,8 +3,41 @@
     <el-container style="height: 100%; border: 1px solid #eee">
       <el-container>
         <el-header style="font-size: 12px" :inline="true">
-          <el-col :span="5">
-            <el-input v-model="pageQuery.keyword" clearable />
+          <el-col :span="3">
+            <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/别名" />
+          </el-col>
+          <el-col :span="3">
+            <div class="pageQueryTag">
+              <el-select v-model="pageQuery.tagIds" multiple clearable placeholder="请选择标签">
+                <el-option
+                  v-for="item in tagListDate"
+                  :key="item.tagId"
+                  :label="item.tagName"
+                  :value="item.tagId"
+                />
+              </el-select>
+            </div>
+          </el-col>
+          <el-col :span="3">
+            <div class="pageQueryCategory">
+              <el-tree
+                ref="pageQueryTree"
+                style="z-index: 10"
+                :default-checked-keys="pageQuery.categoryIds"
+                :data="categoryTreeData"
+                :props="defaultProps"
+                node-key="categoryId"
+                :default-expand-all="false"
+                highlight-current
+                show-checkbox
+                draggable
+                render-after-expand
+              >
+                <span slot-scope="{ node }" class="custom-tree-node">
+                  <span>{{ node.label }}</span>
+                </span>
+              </el-tree>
+            </div>
           </el-col>
           <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
           <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
@@ -43,6 +76,8 @@
 
 <script>
 import { pagePost } from '@/api/post'
+import { getTagList } from '@/api/tag'
+import { treeCategory } from '@/api/category'
 import Pagination from '@/components/Pagination'
 import addEditDialog from '@/components/Post'
 
@@ -64,10 +99,20 @@ export default {
   },
   data() {
     return {
+      // 标签选择框
+      tagListDate: null,
+      // 分类树形结构数据
+      categoryTreeData: null,
+      defaultProps: {
+        children: 'child',
+        label: 'categoryName'
+      },
       // 页面显示数据
       tableData: null,
       // 搜索/分页关键字
       pageQuery: {
+        tagIds: [],
+        categoryIds: [],
         keyword: '',
         current: 1,
         size: 10
@@ -78,12 +123,13 @@ export default {
       addEditVisible: false,
       dialogType: 'add',
       // 选中行文章ID
-      postId: '',
-      direction: 'rtl'
+      postId: ''
     }
   },
   created() {
     this.fetchData()
+    this.tagList()
+    this.categoryTree()
   },
   methods: {
     // 添加标签弹框控制
@@ -93,9 +139,22 @@ export default {
     },
     // 分类列表
     fetchData() {
+      // 获取文章列表
       pagePost(this.pageQuery).then(response => {
         this.tableData = response.data.records
         this.total = response.data.total
+      })
+    },
+    // 分类树形数据
+    categoryTree() {
+      treeCategory().then(response => {
+        this.categoryTreeData = response.data
+      })
+    },
+    // 标签列表
+    tagList() {
+      getTagList().then(response => {
+        this.tagListDate = response.data
       })
     },
     // 点击搜索，重置页码为 1
@@ -126,7 +185,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped >
 .post-container {
   background-color: white;
 }
@@ -154,5 +213,13 @@ export default {
   font-size: 40px;
   float:right;
   margin-top:10px;
+}
+.pageQueryTag {
+  margin-left: 10px;
+}
+.pageQueryCategory {
+  margin-top: 15px;
+  margin-left: 10px;
+  font-size: 16px;
 }
 </style>

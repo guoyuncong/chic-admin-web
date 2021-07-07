@@ -34,7 +34,7 @@
               :data="categoryTreeData"
               :props="defaultProps"
               node-key="categoryId"
-              default-expand-all
+              :default-expand-all="false"
               highlight-current
               show-checkbox
               draggable
@@ -164,6 +164,7 @@ export default {
     // 关闭抽屉
     handleClose() {
       this.addEditVisible = false
+      this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
     },
     // 取消按钮

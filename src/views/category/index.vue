@@ -64,6 +64,8 @@ export default {
       // 搜索/分页关键字
       pageQuery: {
         keyword: '',
+        categoryId: '',
+        tagIds: [],
         current: 1,
         size: 10
       },
