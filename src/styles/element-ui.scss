@@ -41,6 +41,11 @@
   font-size: 16px;
   font-family: Times New Roman, 楷体, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
 }
+.el-tag.el-tag--info {
+  background-color: #409eff;
+  border-color: #e9e9eb;
+  color: #f4f4f5;
+}
 // to fixed https://github.com/ElemeFE/element/issues/2461
 .el-dialog {
   transform: none;

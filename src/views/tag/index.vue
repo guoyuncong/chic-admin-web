@@ -1,6 +1,6 @@
 <template>
   <el-row :gutter="5">
-    <el-col :span="15">
+    <el-col :span="12">
       <div class="tag-container">
         <el-container>
           <el-container>
@@ -31,9 +31,9 @@
         </el-container>
       </div>
     </el-col>
-    <el-col :span="9">
+    <el-col :span="12">
       <div class="tag-aside">
-        <el-button v-for="item in tableData" :key="item.tagId" class="tagButton" size="small" :type="btnType()" round>
+        <el-button v-for="item in tableData" :key="item.tagId" class="tagButton" size="mini" :type="btnType()" round>
           {{ item.tagName }}
         </el-button>
       </div>
@@ -131,7 +131,7 @@ export default {
 }
 .tag-aside {
   /* 上 右 下 左 */
-  margin: 15px 20px 5px 30px;
+  margin: 15px 10px 5px 10px;
   /*50 = navbar  */
   min-height: calc(100vh - 50px - 40px);
   background-color: white;

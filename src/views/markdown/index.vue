@@ -1,32 +1,26 @@
 <template>
   <div class="editor-container">
-    <markdown-editor v-model="content" />
+    <markdown-editor ref="markdownEditor" v-model="content" />
     <div class="footer">
-      <el-button type="danger">保存草稿</el-button>
-      <el-button type="primary">发布文章</el-button>
+      <el-button type="danger" @click="updateStatus">保存草稿</el-button>
+      <el-button type="primary" @click="publishPost">发布文章</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { detailPost } from '@/api/post'
+import { detailPost, editPost, updateStatus } from '@/api/post'
 
 import MarkdownEditor from '@/components/MarkdownEditor'
 
-const content = `
-**This is test**
-* vue
-* element
-* webpack
-`
 export default {
   name: 'Markdown',
   components: { MarkdownEditor },
   data() {
     return {
       title: '',
-      content: content,
-      abbr: '',
+      content: '',
+      postId: '',
       html: '',
       languageTypeList: {
         'en': 'en_US',
@@ -41,22 +35,42 @@ export default {
     }
   },
   created() {
-    this.abbr = this.$route.query.abbr
-    this.fetchData(this.abbr)
+    this.postId = this.$route.query.postId
+    console.log(this.postId)
+    this.fetchData(this.postId)
   },
   methods: {
     // 获取文章详情
-    fetchData(abbr) {
+    fetchData(postId) {
       detailPost({
-        abbr: abbr
+        postId: postId
       }).then(response => {
         this.content = response.data.originContent
         this.title = response.data.title
       })
     },
-    getHtml() {
-      this.html = this.$refs.markdownEditor.getHtml()
-      console.log(this.html)
+    // 发布文章
+    publishPost() {
+      editPost({
+        postId: this.postId,
+        originContent: this.$refs.markdownEditor.getValue(),
+        formatContent: this.$refs.markdownEditor.getHtml()
+      }).then(response => {
+        this.$router.push({
+          path: '/posts/post'
+        })
+      })
+    },
+    // 更改文章状态
+    updateStatus() {
+      updateStatus({
+        postId: this.postId,
+        status: 2
+      }).then(response => {
+        this.$router.push({
+          path: '/posts/post'
+        })
+      })
     }
   }
 }
@@ -75,7 +89,7 @@ export default {
   position: absolute;
   width: 100%;
   align-items: center;
-  bottom: 0;
+  bottom: 20px;
   justify-content: flex-end;
 }
 .el-button {

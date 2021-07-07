@@ -25,6 +25,22 @@ export function setPost(data) {
     data
   })
 }
+// 编辑文章
+export function editPost(data) {
+  return request({
+    url: '/post/edit',
+    method: 'post',
+    data
+  })
+}
+// 更改文章状态
+export function updateStatus(data) {
+  return request({
+    url: '/post/updateStatus',
+    method: 'post',
+    data
+  })
+}
 // 文章详情
 export function detailPost(params) {
   return request({

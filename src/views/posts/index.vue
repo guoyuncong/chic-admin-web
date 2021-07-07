@@ -3,12 +3,12 @@
     <el-container style="height: 100%; border: 1px solid #eee">
       <el-container>
         <el-header style="font-size: 12px" :inline="true">
-          <el-col :span="3">
-            <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/别名" />
-          </el-col>
-          <el-col :span="3">
-            <div class="pageQueryTag">
-              <el-select v-model="pageQuery.tagIds" multiple clearable placeholder="请选择标签">
+          <el-row :gutter="18">
+            <el-col :span="4">
+              <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/别名/关键字" />
+            </el-col>
+            <el-col :span="4">
+              <el-select v-model="pageQuery.tagIds" multiple clearable placeholder="标签">
                 <el-option
                   v-for="item in tagListDate"
                   :key="item.tagId"
@@ -16,49 +16,79 @@
                   :value="item.tagId"
                 />
               </el-select>
-            </div>
-          </el-col>
-          <el-col :span="3">
-            <div class="pageQueryCategory">
-              <el-tree
-                ref="pageQueryTree"
-                style="z-index: 10"
-                :default-checked-keys="pageQuery.categoryIds"
-                :data="categoryTreeData"
-                :props="defaultProps"
-                node-key="categoryId"
-                :default-expand-all="false"
-                highlight-current
-                show-checkbox
-                draggable
-                render-after-expand
-              >
-                <span slot-scope="{ node }" class="custom-tree-node">
-                  <span>{{ node.label }}</span>
-                </span>
-              </el-tree>
-            </div>
-          </el-col>
-          <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
-          <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
+            </el-col>
+            <el-col :span="4">
+              <el-select v-model="pageQuery.status" clearable placeholder="文章状态">
+                <el-option
+                  v-for="item in status"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="3">
+              <div class="pageQueryCategory">
+                <el-tree
+                  ref="pageQueryTree"
+                  style="z-index: 10"
+                  :default-checked-keys="pageQuery.categoryIds"
+                  :data="categoryTreeData"
+                  :props="defaultProps"
+                  node-key="categoryId"
+                  :default-expand-all="false"
+                  highlight-current
+                  show-checkbox
+                  draggable
+                  render-after-expand
+                >
+                  <span slot-scope="{ node }" class="custom-tree-node">
+                    <span>{{ node.label }}</span>
+                  </span>
+                </el-tree>
+              </div>
+            </el-col>
+            <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
+            <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
+          </el-row>
         </el-header>
         <el-main>
           <el-table :data="tableData">
             <el-table-column align="center" prop="title" label="标题" />
             <el-table-column align="center" prop="abbr" label="别名" />
-            <el-table-column align="center" prop="status" label="状态" />
-            <el-table-column align="center" prop="visitNum" label="访问次数" />
-            <el-table-column align="center" prop="updateNum" label="修改次数" />
+            <el-table-column align="center" label="状态">
+              <template slot-scope="scope">
+                <el-button class="tagButton" size="mini" :type="btnType()" round>
+                  {{ scope.row.statusTrans }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="分类">
+              <template slot-scope="scope">
+                <el-button v-for="item in scope.row.categories" :key="item.categoryId" class="tagButton" size="mini" :type="btnType()" round>
+                  {{ item.categoryName }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="标签">
+              <template slot-scope="scope">
+                <el-button v-for="item in scope.row.tags" :key="item.tagId" class="tagButton" size="mini" :type="btnType()" round>
+                  {{ item.tagName }}
+                </el-button>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="visitNum" label="访问" />
+            <el-table-column align="center" prop="updateNum" label="修改" />
             <el-table-column align="center" prop="publishTime" label="发布时间">
               <template slot-scope="scope">
                 <span>{{ scope.row.publishTime }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" fixed="right" label="操作">
+            <el-table-column align="center" fixed="right" label="操作" width="240px">
               <template slot-scope="scope">
-                <div style="display: flex; width:100px">
+                <div style="display: flex;">
                   <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
-                  <el-button size="mini" type="danger" @click="handleDelete(scope.row)">回收站</el-button>
+                  <el-button size="mini" type="danger" @click="updateStatus(scope.row)">回收站</el-button>
                   <el-button size="mini" @click="setPost(scope.row.postId)">设置</el-button>
                 </div>
               </template>
@@ -75,9 +105,10 @@
 </template>
 
 <script>
-import { pagePost } from '@/api/post'
+import { pagePost, updateStatus } from '@/api/post'
 import { getTagList } from '@/api/tag'
 import { treeCategory } from '@/api/category'
+import { joint } from '@/utils/str'
 import Pagination from '@/components/Pagination'
 import addEditDialog from '@/components/Post'
 
@@ -99,6 +130,25 @@ export default {
   },
   data() {
     return {
+      status: [{
+        value: '1',
+        label: '已发布'
+      }, {
+        value: '2',
+        label: '草稿中'
+      }, {
+        value: '3',
+        label: '回收站'
+      }],
+      // 搜索/分页关键字
+      pageQuery: {
+        tagIds: [],
+        categoryIds: [],
+        status: null,
+        keyword: '',
+        current: 1,
+        size: 10
+      },
       // 标签选择框
       tagListDate: null,
       // 分类树形结构数据
@@ -109,14 +159,6 @@ export default {
       },
       // 页面显示数据
       tableData: null,
-      // 搜索/分页关键字
-      pageQuery: {
-        tagIds: [],
-        categoryIds: [],
-        keyword: '',
-        current: 1,
-        size: 10
-      },
       // 总条数
       total: 0,
       // 新增/编辑文章标识
@@ -132,15 +174,22 @@ export default {
     this.categoryTree()
   },
   methods: {
+    // 按钮随机类型，类型不同颜色不同
+    btnType() {
+      return ['primary', 'success', 'warning', 'danger', 'info'][Math.floor((Math.random() * 4))]
+    },
     // 添加标签弹框控制
     addDialog() {
       this.dialogType = 'add'
       this.addEditVisible = true
     },
-    // 分类列表
+    // 获取文章列表
     fetchData() {
-      // 获取文章列表
-      pagePost(this.pageQuery).then(response => {
+      pagePost({
+        keyword: this.pageQuery.keyword,
+        current: this.pageQuery.current,
+        size: this.pageQuery.size
+      }).then(response => {
         this.tableData = response.data.records
         this.total = response.data.total
       })
@@ -159,17 +208,22 @@ export default {
     },
     // 点击搜索，重置页码为 1
     searchData() {
-      this.pageQuery.current = 1
-      pagePost(this.pageQuery).then(response => {
+      pagePost({
+        tagIds: joint(this.pageQuery.tagIds),
+        categoryIds: joint(this.$refs.pageQueryTree.getCheckedKeys()),
+        keyword: this.pageQuery.keyword,
+        current: this.pageQuery.current,
+        size: this.pageQuery.size
+      }).then(response => {
         this.tableData = response.data.records
         this.total = response.data.total
       })
     },
     // 编辑文章内容
-    writePost(abbr) {
+    writePost(postId) {
       this.$router.push({
         path: '/posts/write',
-        query: { abbr: abbr }
+        query: { postId: postId }
       })
     },
     // 设置文章属性
@@ -178,8 +232,12 @@ export default {
       this.dialogType = 'edit'
       this.postId = postId
     },
-    handleDelete(row) {
-
+    // 更改文章状态
+    updateStatus(row) {
+      updateStatus({
+        postId: row.postId,
+        status: 3
+      })
     }
   }
 }
@@ -214,12 +272,13 @@ export default {
   float:right;
   margin-top:10px;
 }
-.pageQueryTag {
-  margin-left: 10px;
-}
 .pageQueryCategory {
   margin-top: 15px;
   margin-left: 10px;
   font-size: 16px;
+}
+.tagButton {
+  margin-top:10px;
+  margin-left:10px;
 }
 </style>

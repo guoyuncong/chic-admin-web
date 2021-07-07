@@ -29,7 +29,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/posts/post',
     name: 'Posts',
-    meta: { title: '文章', icon: 'el-icon-s-help' },
+    meta: { title: '文章', icon: 'form' },
     children: [
       {
         path: 'post',
@@ -52,6 +52,24 @@ export const constantRoutes = [
         name: 'Tag',
         component: () => import('@/views/tag/index'),
         meta: { title: '标签', icon: 'tree' }
+      }
+    ]
+  }, {
+    path: '/attachment',
+    component: Layout,
+    redirect: '/attachment/picture',
+    name: 'Posts',
+    meta: { title: '附件', icon: 'nested' },
+    children: [
+      {
+        path: 'picture',
+        name: 'Picture',
+        component: () => import('@/views/attachment/index'),
+        meta: { title: '图片', icon: 'tree' }
+      },
+      {
+        path: 'write',
+        component: () => import('@/views/markdown/index')
       }
     ]
   }

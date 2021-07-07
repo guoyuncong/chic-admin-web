@@ -170,6 +170,7 @@ export default {
     // 取消按钮
     cancelForm() {
       this.addEditVisible = false
+      this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
     },
     // 分类树形数据
@@ -200,6 +201,7 @@ export default {
         }).then(() => {
           this.addEditVisible = false
           this.$emit('reload')
+          this.$emit('update:visible', this.addEditVisible)
           this.$refs.form.resetFields()
         })
       } else {
@@ -216,6 +218,7 @@ export default {
           categoryIds: this.$refs.tree.getCheckedKeys()
         }).then(() => {
           this.addEditVisible = false
+          this.$emit('update:visible', this.addEditVisible)
           this.$emit('reload')
           this.$refs.form.resetFields()
         })
