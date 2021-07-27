@@ -1,8 +1,8 @@
 <template>
   <el-drawer
     title="文章设置"
-    :visible.sync="addEditVisible"
     direction="rtl"
+    :visible.sync="addEditVisible"
     :before-close="handleClose"
   >
     <div class="post-drawer__content">

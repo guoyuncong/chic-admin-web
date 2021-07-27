@@ -35,6 +35,14 @@ module.exports = {
         pathRewrite: {
           '/api': ''
         }
+      },
+      'api/system': {
+        // target: 'http://47.99.184.240:8889',
+        target: 'http://127.0.0.1:8081',
+        changeOrigin: true,
+        pathRewrite: {
+          '/api': ''
+        }
       }
     }
   },
