@@ -8,9 +8,9 @@
               <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/别名/关键字" />
             </el-col>
             <el-col :span="4">
-              <el-select v-model="pageQuery.tagIds" multiple clearable placeholder="标签">
+              <el-select v-model="pageQuery.tagIds" multiple clearable :collapse-tags="true" placeholder="标签">
                 <el-option
-                  v-for="item in tagListDate"
+                  v-for="item in tagsData"
                   :key="item.tagId"
                   :label="item.tagName"
                   :value="item.tagId"
@@ -27,26 +27,15 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="3">
-              <div class="pageQueryCategory">
-                <el-tree
-                  ref="pageQueryTree"
-                  style="z-index: 10"
-                  :default-checked-keys="pageQuery.categoryIds"
-                  :data="categoryTreeData"
-                  :props="defaultProps"
-                  node-key="categoryId"
-                  :default-expand-all="false"
-                  highlight-current
-                  show-checkbox
-                  draggable
-                  render-after-expand
-                >
-                  <span slot-scope="{ node }" class="custom-tree-node">
-                    <span>{{ node.label }}</span>
-                  </span>
-                </el-tree>
-              </div>
+            <el-col :span="4">
+              <el-cascader
+                ref="category-cascader"
+                :options="categoriesData"
+                :props="categoryProps"
+                :collapse-tags="true"
+                clearable
+                @change="handleChange"
+              />
             </el-col>
             <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
             <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
@@ -150,13 +139,9 @@ export default {
         size: 10
       },
       // 标签选择框
-      tagListDate: null,
+      tagsData: null,
       // 分类树形结构数据
-      categoryTreeData: null,
-      defaultProps: {
-        children: 'child',
-        label: 'categoryName'
-      },
+      categoriesData: null,
       // 页面显示数据
       tableData: null,
       // 总条数
@@ -165,13 +150,26 @@ export default {
       addEditVisible: false,
       dialogType: 'add',
       // 选中行文章ID
-      postId: ''
+      postId: '',
+      // 使用 Cascader 级联选择器后台返回的数据和要求的不一致时，映射
+      categoryProps: {
+        // value 映射返回值 categoryId
+        value: 'categoryId',
+        // label 映射返回值 categoryName
+        label: 'categoryName',
+        // children 映射返回值 child 数组
+        children: 'child',
+        // 是否严格的遵守父子节点不互相关联
+        checkStrictly: true,
+        // 允许多选
+        multiple: true
+      }
     }
   },
   created() {
     this.fetchData()
     this.tagList()
-    this.categoryTree()
+    this.categoryList()
   },
   methods: {
     // 按钮随机类型，类型不同颜色不同
@@ -194,23 +192,28 @@ export default {
         this.total = response.data.total
       })
     },
-    // 分类树形数据
-    categoryTree() {
+    // 分类列表数据
+    categoryList() {
       treeCategory().then(response => {
-        this.categoryTreeData = response.data
+        this.categoriesData = response.data
       })
+    },
+    // 获取分类列表选中内容
+    handleChange() {
+      var checkedCategory = this.$refs['category-cascader'].getCheckedNodes()
+      this.pageQuery.categoryIds = checkedCategory.map(item => item.data.categoryId)
     },
     // 标签列表
     tagList() {
       getTagList().then(response => {
-        this.tagListDate = response.data
+        this.tagsData = response.data
       })
     },
     // 点击搜索，重置页码为 1
     searchData() {
       pagePost({
         tagIds: joint(this.pageQuery.tagIds),
-        categoryIds: joint(this.$refs.pageQueryTree.getCheckedKeys()),
+        categoryIds: joint(this.pageQuery.categoryIds),
         keyword: this.pageQuery.keyword,
         current: this.pageQuery.current,
         size: this.pageQuery.size

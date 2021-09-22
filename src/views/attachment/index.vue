@@ -24,11 +24,7 @@
       <el-row :gutter="20">
         <el-col v-for="item in tableData" :key="item.attachmentId" :span="4" class="card">
           <el-card :body-style="{ padding: '0px'}">
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="item.path"
-              :preview-src-list="srcList"
-            />
+            <img :src="item.path" class="image">
             <div style="padding: 14px;" @click="editDialog(item)">
               <span> {{ item.attachmentName }}</span>
             </div>
@@ -147,5 +143,11 @@ export default {
 }
 .upload-btn {
   float: right;
+}
+.image {
+  height: 150px;
+  width: 300px;
+  display: block;
+  object-fit: fill;
 }
 </style>
