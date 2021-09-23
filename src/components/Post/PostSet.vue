@@ -1,3 +1,4 @@
+<!-- 文章设置页面 -->
 <template>
   <el-drawer
     title="文章设置"
@@ -27,29 +28,23 @@
           <el-radio v-model="formData.topFlag" :label="false">否</el-radio>
         </el-form-item>
         <el-form-item label="分类目录" label-width="100px">
-          <div class="treeCategory">
-            <el-tree
-              ref="tree"
-              :default-checked-keys="categoryIds"
-              :data="categoryTreeData"
-              :props="defaultProps"
-              node-key="categoryId"
-              :default-expand-all="false"
-              highlight-current
-              show-checkbox
-              draggable
-              render-after-expand
-            >
-              <span slot-scope="{ node }" class="custom-tree-node">
-                <span>{{ node.label }}</span>
-              </span>
-            </el-tree>
-          </div>
+          <!-- 文章分类选择框 -->
+          <el-col :span="12">
+            <el-cascader
+              ref="category-cascader"
+              placeholder="请选择分类"
+              :options="categoriesData"
+              :props="categoryProps"
+              :collapse-tags="true"
+              clearable
+              @change="handleChange"
+            />
+          </el-col>
         </el-form-item>
         <el-form-item label="选择标签" label-width="100px">
-          <el-select v-model="tagIds" multiple clearable placeholder="请选择">
+          <el-select v-model="tagIds" multiple clearable :collapse-tags="true" placeholder="请选择标签">
             <el-option
-              v-for="item in tagListDate"
+              v-for="item in tagsData"
               :key="item.tagId"
               :label="item.tagName"
               :value="item.tagId"
@@ -126,14 +121,23 @@ export default {
       tagIds: [],
       // 选中的分类
       categoryIds: [],
-      // 分类树形结构数据
-      categoryTreeData: null,
-      defaultProps: {
+      // 分类列表数据
+      categoriesData: null,
+      // 标签列表数据
+      tagsData: null,
+      // 使用 Cascader 级联选择器后台返回的数据和要求的不一致时，映射
+      categoryProps: {
+        // value 映射返回值 categoryId
+        value: 'categoryId',
+        // label 映射返回值 categoryName
+        label: 'categoryName',
+        // children 映射返回值 child 数组
         children: 'child',
-        label: 'categoryName'
-      },
-      // 标签列表
-      tagListDate: null
+        // 是否严格的遵守父子节点不互相关联
+        checkStrictly: true,
+        // 允许多选
+        multiple: true
+      }
     }
   },
   watch: {
@@ -157,7 +161,7 @@ export default {
     }
   },
   created() {
-    this.categoryTree()
+    this.categoryList()
     this.tagList()
   },
   methods: {
@@ -173,16 +177,21 @@ export default {
       this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
     },
-    // 分类树形数据
-    categoryTree() {
+    // 分类列表数据
+    categoryList() {
       treeCategory().then(response => {
-        this.categoryTreeData = response.data
+        this.categoriesData = response.data
       })
+    },
+    // 获取分类列表选中内容
+    handleChange() {
+      var checkedCategory = this.$refs['category-cascader'].getCheckedNodes()
+      this.categoryIds = checkedCategory.map(item => item.data.categoryId)
     },
     // 标签列表
     tagList() {
       getTagList().then(response => {
-        this.tagListDate = response.data
+        this.tagsData = response.data
       })
     },
     // 新增/编辑文章
@@ -215,7 +224,7 @@ export default {
           digest: this.formData.digest,
           keywords: this.formData.keywords,
           tagIds: this.tagIds,
-          categoryIds: this.$refs.tree.getCheckedKeys()
+          categoryIds: this.categoryIds
         }).then(() => {
           this.addEditVisible = false
           this.$emit('update:visible', this.addEditVisible)

@@ -4,10 +4,10 @@
     <el-dialog :title="dialogType ==='add' ? '新增分类': '编辑分类'" :visible.sync="addEditVisible" width="30%" @close="close">
       <el-form ref="form">
         <el-form-item v-if="dialogType ==='add'" label="父级分类" label-width="100px">
-          <el-input v-model="categoryName" size="small" autocomplete="off" :disabled="true" />
+          <el-input v-model="formData.categoryName" size="small" autocomplete="off" :disabled="true" />
         </el-form-item>
         <el-form-item label="名称" label-width="100px">
-          <el-input v-model="formData.categoryName" size="small" autocomplete="off" />
+          <el-input v-model="categoryName" size="small" autocomplete="off" />
         </el-form-item>
         <el-form-item label="别名" label-width="100px">
           <el-input v-model="formData.alias" size="small" autocomplete="off" />
@@ -22,7 +22,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addVisible = false">取 消</el-button>
+        <el-button @click="close()">取 消</el-button>
         <el-button type="primary" @click="handleAddEdit()">确 定</el-button>
       </div>
     </el-dialog>
@@ -75,11 +75,11 @@ export default {
         this.addEditVisible = val
         if (val && this.dialogType === 'add') {
           this.formData = JSON.parse(JSON.stringify(this.rowInfo))
-          this.categoryName = this.formData.categoryName
-          this.formData = {}
+          console.log(this.formData)
         }
         if (val && this.dialogType === 'edit') {
           this.formData = JSON.parse(JSON.stringify(this.rowInfo))
+          this.categoryName = this.formData.categoryName
         }
       }
     }
@@ -98,9 +98,9 @@ export default {
         addCategory({
           parentId: this.formData.categoryId,
           categoryName: this.categoryName,
-          alias: this.alias,
-          description: this.description,
-          sort: this.sort
+          alias: this.forData.alias,
+          description: this.forData.description,
+          sort: this.forData.sort
         }).then(() => {
           this.$refs.form.resetFields()
           this.addCategoryVisible = false
@@ -108,10 +108,11 @@ export default {
           this.$emit('reload')
         })
       } else {
+        console.log(this.formData)
         updateCategory({
           categoryId: this.formData.categoryId,
-          categoryName: this.formData.categoryName,
-          alias: this.alias,
+          categoryName: this.categoryName,
+          alias: this.formData.alias,
           sort: this.formData.sort,
           description: this.formData.description
         }).then(() => {

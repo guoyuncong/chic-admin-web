@@ -4,9 +4,11 @@
       <el-container>
         <el-header style="font-size: 12px" :inline="true">
           <el-row :gutter="18">
+            <!-- 文章搜索框 -->
             <el-col :span="4">
               <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/别名/关键字" />
             </el-col>
+            <!-- 标签选择框 -->
             <el-col :span="4">
               <el-select v-model="pageQuery.tagIds" multiple clearable :collapse-tags="true" placeholder="标签">
                 <el-option
@@ -17,6 +19,7 @@
                 />
               </el-select>
             </el-col>
+            <!-- 文章状态选择框 -->
             <el-col :span="4">
               <el-select v-model="pageQuery.status" clearable placeholder="文章状态">
                 <el-option
@@ -27,9 +30,11 @@
                 />
               </el-select>
             </el-col>
+            <!-- 文章分类选择框 -->
             <el-col :span="4">
               <el-cascader
                 ref="category-cascader"
+                placeholder="请选择分类"
                 :options="categoriesData"
                 :props="categoryProps"
                 :collapse-tags="true"
@@ -41,6 +46,7 @@
             <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
           </el-row>
         </el-header>
+        <!-- 文章列表展示 -->
         <el-main>
           <el-table :data="tableData">
             <el-table-column align="center" prop="title" label="标题" />
@@ -99,7 +105,7 @@ import { getTagList } from '@/api/tag'
 import { treeCategory } from '@/api/category'
 import { joint } from '@/utils/str'
 import Pagination from '@/components/Pagination'
-import addEditDialog from '@/components/Post'
+import addEditDialog from '@/components/Post/PostSet'
 
 export default {
   name: 'Posts',

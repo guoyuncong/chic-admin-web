@@ -13,7 +13,7 @@
         <span class="operate">
           <svg-icon class="plusIcon" icon-class="tree-plus" @click="addDialog(data)" />
           <svg-icon class="plusIcon" icon-class="tree-update" @click="editDialog(data)" />
-          <svg-icon v-if="data.child.length === 0" class="plusIcon" icon-class="tree-delete" @click="handleDelete(data)" />
+          <svg-icon v-if="data.child === null" class="plusIcon" icon-class="tree-delete" @click="handleDelete(data)" />
         </span>
       </span>
     </el-tree>

@@ -1,5 +1,10 @@
 <template>
   <el-row :gutter="5">
+    <el-col :span="9">
+      <div class="category-aside">
+        <tree-category @reload="fetchData" />
+      </div>
+    </el-col>
     <el-col :span="15">
       <div class="category-container">
         <el-container style="height: 100%; border: 1px solid #eee">
@@ -26,11 +31,6 @@
         </el-container>
         <!-- 分页 -->
         <pagination v-show="total>0" :total="total" :current.sync="pageQuery.current" :size.sync="pageQuery.size" :keyword.sync="pageQuery.keyword" @pagination="fetchData" />
-      </div>
-    </el-col>
-    <el-col :span="9">
-      <div class="category-aside">
-        <tree-category @reload="fetchData" />
       </div>
     </el-col>
   </el-row>
