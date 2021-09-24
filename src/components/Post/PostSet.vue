@@ -168,12 +168,16 @@ export default {
       this.addEditVisible = false
       this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
+      // 关闭抽屉，将已有标签置空
+      this.tagIds = null
     },
     // 取消按钮
     cancelForm() {
       this.addEditVisible = false
       this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
+      // 取消按钮，将已有标签置空
+      this.tagIds = null
     },
     // 分类列表数据
     categoryList() {
