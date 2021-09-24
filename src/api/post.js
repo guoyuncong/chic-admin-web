@@ -49,3 +49,11 @@ export function detailPost(params) {
     params
   })
 }
+// 删除文章
+export function deletePost(data) {
+  return request({
+    url: '/post/delete',
+    method: 'post',
+    data
+  })
+}

@@ -2,14 +2,14 @@
   <div class="editor-container">
     <markdown-editor ref="markdownEditor" v-model="content" />
     <div class="footer">
-      <el-button type="danger" @click="updateStatus">保存草稿</el-button>
-      <el-button type="primary" @click="publishPost">发布文章</el-button>
+      <el-button type="danger" @click="editPost(2)">保存草稿</el-button>
+      <el-button type="primary" @click="editPost(1)">发布文章</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { detailPost, editPost, updateStatus } from '@/api/post'
+import { detailPost, editPost } from '@/api/post'
 
 import MarkdownEditor from '@/components/MarkdownEditor'
 
@@ -36,36 +36,25 @@ export default {
   },
   created() {
     this.postId = this.$route.query.postId
-    console.log(this.postId)
     this.fetchData(this.postId)
   },
   methods: {
     // 获取文章详情
     fetchData(postId) {
       detailPost({
-        postId: postId
+        postId
       }).then(response => {
         this.content = response.data.originContent
         this.title = response.data.title
       })
     },
-    // 发布文章
-    publishPost() {
+    // 编辑文章
+    editPost(status) {
       editPost({
         postId: this.postId,
         originContent: this.$refs.markdownEditor.getValue(),
-        formatContent: this.$refs.markdownEditor.getHtml()
-      }).then(response => {
-        this.$router.push({
-          path: '/posts/post'
-        })
-      })
-    },
-    // 更改文章状态
-    updateStatus() {
-      updateStatus({
-        postId: this.postId,
-        status: 2
+        formatContent: this.$refs.markdownEditor.getHtml(),
+        status: status
       }).then(response => {
         this.$router.push({
           path: '/posts/post'

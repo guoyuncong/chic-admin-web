@@ -3,11 +3,7 @@
     <el-container style="height: 100%; border: 1px solid #eee">
       <el-container>
         <el-header style="font-size: 12px" :inline="true">
-          <el-row :gutter="18">
-            <!-- 文章搜索框 -->
-            <el-col :span="4">
-              <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/别名/关键字" />
-            </el-col>
+          <el-row>
             <!-- 标签选择框 -->
             <el-col :span="4">
               <el-select v-model="pageQuery.tagIds" multiple clearable :collapse-tags="true" placeholder="标签">
@@ -18,6 +14,18 @@
                   :value="item.tagId"
                 />
               </el-select>
+            </el-col>
+            <!-- 文章分类选择框 -->
+            <el-col :span="4">
+              <el-cascader
+                ref="category-cascader"
+                placeholder="分类"
+                :options="categoriesData"
+                :props="categoryProps"
+                :collapse-tags="true"
+                clearable
+                @change="handleChange"
+              />
             </el-col>
             <!-- 文章状态选择框 -->
             <el-col :span="4">
@@ -30,17 +38,9 @@
                 />
               </el-select>
             </el-col>
-            <!-- 文章分类选择框 -->
+            <!-- 文章关键字搜索框 -->
             <el-col :span="4">
-              <el-cascader
-                ref="category-cascader"
-                placeholder="请选择分类"
-                :options="categoriesData"
-                :props="categoryProps"
-                :collapse-tags="true"
-                clearable
-                @change="handleChange"
-              />
+              <el-input v-model="pageQuery.keyword" clearable placeholder="文章名称/关键字" />
             </el-col>
             <el-button class="searchBtn" type="primary" icon="el-icon-search" @click="searchData()">搜索</el-button>
             <svg-icon class="plusIcon" icon-class="plus" @click="addDialog" />
@@ -50,14 +50,6 @@
         <el-main>
           <el-table :data="tableData">
             <el-table-column align="center" prop="title" label="标题" />
-            <el-table-column align="center" prop="abbr" label="别名" />
-            <el-table-column align="center" label="状态">
-              <template slot-scope="scope">
-                <el-button class="tagButton" size="mini" :type="btnType()" round>
-                  {{ scope.row.statusTrans }}
-                </el-button>
-              </template>
-            </el-table-column>
             <el-table-column align="center" label="分类">
               <template slot-scope="scope">
                 <el-button v-for="item in scope.row.categories" :key="item.categoryId" class="tagButton" size="mini" :type="btnType()" round>
@@ -72,8 +64,15 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="visitNum" label="访问" />
-            <el-table-column align="center" prop="updateNum" label="修改" />
+            <el-table-column align="center" prop="visitNum" label="访问次数" />
+            <el-table-column align="center" prop="updateNum" label="修改次数" />
+            <el-table-column align="center" label="状态">
+              <template slot-scope="scope">
+                <el-button class="tagButton" size="mini" :type="btnType()" round>
+                  {{ scope.row.statusTrans }}
+                </el-button>
+              </template>
+            </el-table-column>
             <el-table-column align="center" prop="publishTime" label="发布时间">
               <template slot-scope="scope">
                 <span>{{ scope.row.publishTime }}</span>
@@ -82,8 +81,8 @@
             <el-table-column align="center" fixed="right" label="操作" width="240px">
               <template slot-scope="scope">
                 <div style="display: flex;">
-                  <el-button size="mini" @click="writePost(scope.row.abbr)">编辑</el-button>
-                  <el-button size="mini" type="danger" @click="updateStatus(scope.row)">回收站</el-button>
+                  <el-button size="mini" @click="writePost(scope.row.postId)">编辑</el-button>
+                  <el-button size="mini" type="danger" @click="deletePost(scope.row.postId)">删除</el-button>
                   <el-button size="mini" @click="setPost(scope.row.postId)">设置</el-button>
                 </div>
               </template>
@@ -100,7 +99,7 @@
 </template>
 
 <script>
-import { pagePost, updateStatus } from '@/api/post'
+import { pagePost, deletePost } from '@/api/post'
 import { getTagList } from '@/api/tag'
 import { treeCategory } from '@/api/category'
 import { joint } from '@/utils/str'
@@ -221,6 +220,7 @@ export default {
         tagIds: joint(this.pageQuery.tagIds),
         categoryIds: joint(this.pageQuery.categoryIds),
         keyword: this.pageQuery.keyword,
+        status: this.pageQuery.status,
         current: this.pageQuery.current,
         size: this.pageQuery.size
       }).then(response => {
@@ -228,24 +228,35 @@ export default {
         this.total = response.data.total
       })
     },
-    // 编辑文章内容
-    writePost(postId) {
-      this.$router.push({
-        path: '/posts/write',
-        query: { postId: postId }
-      })
-    },
-    // 设置文章属性
+    // 设置文章属性弹框
     setPost(postId) {
       this.addEditVisible = true
       this.dialogType = 'edit'
       this.postId = postId
     },
-    // 更改文章状态
-    updateStatus(row) {
-      updateStatus({
-        postId: row.postId,
-        status: 3
+    // 删除文章
+    deletePost(postId) {
+      this.$confirm('此操作将永久删除文章, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deletePost({
+          postId
+        }).then((response) => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.fetchData()
+        })
+      })
+    },
+    // 编辑文章内容，跳转至其他页面
+    writePost(postId) {
+      this.$router.push({
+        path: '/posts/write',
+        query: { postId }
       })
     }
   }
@@ -280,11 +291,6 @@ export default {
   font-size: 40px;
   float:right;
   margin-top:10px;
-}
-.pageQueryCategory {
-  margin-top: 15px;
-  margin-left: 10px;
-  font-size: 16px;
 }
 .tagButton {
   margin-top:10px;

@@ -8,22 +8,22 @@
   >
     <div class="post-drawer__content">
       <el-form ref="form" :model="formData">
-        <el-form-item label="标题" label-width="100px">
+        <el-form-item label="标题" label-width="100px" prop="title">
           <el-input v-model="formData.title" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="别名" label-width="100px">
+        <el-form-item label="别名" label-width="100px" prop="abbr">
           <el-input v-model="formData.abbr" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="发表时间" label-width="100px">
+        <el-form-item label="发表时间" label-width="100px" prop="publishTime">
           <el-col :span="11">
-            <el-date-picker v-model="formData.publishTime" type="datetime" placeholder="选择日期" style="width: 100%;" />
+            <el-date-picker v-model="formData.publishTime" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期" />
           </el-col>
         </el-form-item>
-        <el-form-item label="开启评论" label-width="100px">
+        <el-form-item label="开启评论" label-width="100px" prop="commentFlag">
           <el-radio v-model="formData.commentFlag" :label="true">开启</el-radio>
           <el-radio v-model="formData.commentFlag" :label="false">关闭</el-radio>
         </el-form-item>
-        <el-form-item label="是否置顶" label-width="100px">
+        <el-form-item label="是否置顶" label-width="100px" prop="topFlag">
           <el-radio v-model="formData.topFlag" :label="true">是</el-radio>
           <el-radio v-model="formData.topFlag" :label="false">否</el-radio>
         </el-form-item>
@@ -51,7 +51,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="摘要" label-width="100px">
+        <el-form-item label="摘要" label-width="100px" prop="digest">
           <el-input
             v-model="formData.digest"
             type="textarea"
@@ -59,7 +59,7 @@
             placeholder="请输入内容"
           />
         </el-form-item>
-        <el-form-item label="关键字" label-width="100px">
+        <el-form-item label="关键字" label-width="100px" prop="keywords">
           <el-input v-model="formData.keywords" placeholder="文章搜索" autocomplete="off" />
         </el-form-item>
       </el-form>
@@ -110,7 +110,8 @@ export default {
         keywords: '',
         categories: {
           categoryId: '',
-          categoryName: ''
+          categoryName: '',
+          child: []
         },
         tags: {
           tagId: '',
@@ -149,9 +150,6 @@ export default {
             postId: this.postId
           }).then((response) => {
             this.formData = response.data
-            this.categoryIds = this.formData.categories.map(item => {
-              return item.categoryId
-            })
             this.tagIds = this.formData.tags.map(item => {
               return item.tagId
             })
@@ -186,6 +184,7 @@ export default {
     // 获取分类列表选中内容
     handleChange() {
       var checkedCategory = this.$refs['category-cascader'].getCheckedNodes()
+      console.log(checkedCategory)
       this.categoryIds = checkedCategory.map(item => item.data.categoryId)
     },
     // 标签列表
@@ -206,7 +205,7 @@ export default {
           digest: this.formData.digest,
           keywords: this.formData.keywords,
           tagIds: this.tagIds,
-          categoryIds: this.$refs.tree.getCheckedKeys()
+          categoryIds: this.categoryIds
         }).then(() => {
           this.addEditVisible = false
           this.$emit('reload')
