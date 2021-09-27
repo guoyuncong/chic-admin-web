@@ -6,7 +6,7 @@
           <el-input v-model="pageQuery.keyword" />
         </el-form-item>
         <el-form-item label="文件类型">
-          <el-select v-model="pageQuery.fileType" clearable placeholder="请选择文件类型">
+          <el-select v-model="pageQuery.mediaType" clearable placeholder="请选择文件类型">
             <el-option
               v-for="item in fileType"
               :key="item.value"
@@ -15,7 +15,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="searchData()">查询</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="fetchData()">查询</el-button>
         <el-button type="primary" class="upload-btn" @click="uploadFile">上传<i class="el-icon-upload el-icon--right" /></el-button>
       </el-form>
       <upload-image :visible.sync="uploadVisible" @reload="fetchData" />
@@ -65,13 +65,13 @@ export default {
       // 文件类型：
       fileType: [
         {
-          value: 'gif',
+          value: 'image/gif',
           label: 'image/gif'
         }, {
-          value: 'jpeg',
+          value: 'image/jpeg',
           label: 'image/jpeg'
         }, {
-          value: 'png',
+          value: 'image/png',
           label: 'image/png'
         }
       ],
@@ -80,7 +80,7 @@ export default {
         current: 1,
         size: 18,
         keyword: '',
-        fileType: ''
+        mediaType: ''
       },
       total: 0,
       // 列表数据
@@ -102,6 +102,7 @@ export default {
       this.editVisible = true
       this.attachmentId = item.attachmentId
     },
+    // 附件分页列表
     fetchData() {
       pageAttachment(this.pageQuery).then(response => {
         this.tableData = response.data.records
