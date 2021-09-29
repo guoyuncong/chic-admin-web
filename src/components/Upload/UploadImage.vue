@@ -45,6 +45,7 @@ export default {
     close() {
       this.uploadVisible = false
       this.$emit('update:visible', this.uploadVisible)
+      this.$emit('reload')
     },
     // 上传文件之前
     onBeforeUpload(file) {
