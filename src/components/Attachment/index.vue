@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { detailAttachment, deleteAttachment } from '@/api/attachment'
+import { detailAttachment, deleteAttachment, updateAttachment } from '@/api/attachment'
 
 export default {
   name: 'EditDialog',
@@ -131,7 +131,16 @@ export default {
     },
     // 更新附件
     updateAttachment() {
-      
+      updateAttachment({
+        attachmentId: this.formData.attachmentId,
+        attachmentName: this.formData.attachmentName
+      }).then((response) => {
+        this.$message({
+          type: 'success',
+          message: '修改成功!'
+        })
+        this.handleClose()
+      })
     }
   }
 }

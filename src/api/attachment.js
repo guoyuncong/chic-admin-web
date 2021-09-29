@@ -27,3 +27,12 @@ export function deleteAttachment(data) {
   })
 }
 
+// 修改附件
+export function updateAttachment(data) {
+  return request({
+    url: '/system/attachment/update',
+    method: 'post',
+    data
+  })
+}
+
