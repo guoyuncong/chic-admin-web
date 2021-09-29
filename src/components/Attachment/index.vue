@@ -128,6 +128,10 @@ export default {
           this.handleClose()
         })
       }).catch(() => {})
+    },
+    // 更新附件
+    updateAttachment() {
+      
     }
   }
 }
