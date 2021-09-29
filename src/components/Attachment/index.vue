@@ -106,7 +106,7 @@ export default {
         attachmentId
       }).then(response => {
         this.formData = response.data
-        this.formData.measure = this.formData.height + ' * ' + this.formData.width
+        this.formData.measure = this.formData.width + ' * ' + this.formData.height
         this.formData.size = this.formData.size + ' KB'
         this.formData.markdown = '![' + this.formData.attachmentName + '](' + this.formData.path + ')'
       })
