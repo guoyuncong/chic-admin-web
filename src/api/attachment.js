@@ -18,3 +18,12 @@ export function detailAttachment(params) {
   })
 }
 
+// 删除附件
+export function deleteAttachment(data) {
+  return request({
+    url: '/system/attachment/delete',
+    method: 'post',
+    data
+  })
+}
+

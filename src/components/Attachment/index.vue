@@ -5,14 +5,41 @@
     :visible.sync="editVisible"
     :before-close="handleClose"
   >
-    <div class="post-drawer__content">
-      <el-form ref="form" :model="formData" />
+    <div class="attachment-drawer__content">
+      <el-form ref="form" :model="formData">
+        <el-form-item label="附件名" label-width="100px" prop="title">
+          <el-input v-model="formData.attachmentName" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="附件类型" label-width="100px" prop="title">
+          <el-input v-model="formData.mediaType" autocomplete="off" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="图片尺寸" label-width="100px" prop="title">
+          <el-input v-model="formData.measure" autocomplete="off" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="附件大小" label-width="100px" prop="title">
+          <el-input v-model="formData.size" autocomplete="off" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="上传日期" label-width="100px" prop="title">
+          <el-input v-model="formData.createTime" autocomplete="off" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="普通链接" label-width="100px" prop="title">
+          <el-input v-model="formData.path" autocomplete="off" :disabled="true" />
+        </el-form-item>
+        <el-form-item label="Markdown" label-width="100px" prop="title">
+          <el-input v-model="formData.markdown" autocomplete="off" :disabled="true" />
+        </el-form-item>
+      </el-form>
+      <div class="attachment-drawer__footer">
+        <el-button type="primary" @click="updateAttachment()">确定</el-button>
+        <el-button type="danger" @click="deleteAttachment()">删除</el-button>
+        <el-button @click="handleClose">取 消</el-button>
+      </div>
     </div>
   </el-drawer>
 </template>
 
 <script>
-import { detailAttachment } from '@/api/attachment'
+import { detailAttachment, deleteAttachment } from '@/api/attachment'
 
 export default {
   name: 'EditDialog',
@@ -35,13 +62,20 @@ export default {
       // 数据
       formData: {
         attachmentId: '',
+        // 附件名称
         attachmentName: '',
+        // 附件类型
         mediaType: '',
+        // 附件路径
         path: '',
-        size: null,
-        height: null,
-        width: null,
-        type: ''
+        // 附件大小
+        size: 0,
+        // 附件尺寸
+        measure: '',
+        // 上传日期
+        createTime: '',
+        // markdown 格式
+        markdown: ''
       }
     }
   },
@@ -49,7 +83,10 @@ export default {
     visible: {
       handler(val) {
         this.editVisible = val
-        this.detail(this.attachmentId)
+        // 如果 visible 为 true，即打开抽屉，调用详情接口
+        if (val) {
+          this.detail(this.attachmentId)
+        }
       }
     }
   },
@@ -60,23 +97,37 @@ export default {
     // 关闭抽屉
     handleClose() {
       this.editVisible = false
-      this.$refs.form.resetFields()
       this.$emit('update:visible', this.editVisible)
+      this.$emit('reload')
     },
-    // 取消按钮
-    cancelForm() {
-      this.editVisible = false
-      this.$refs.form.resetFields()
-      this.$emit('update:visible', this.editVisible)
-    },
-    // 文章详情
+    // 附件详情
     detail(attachmentId) {
       detailAttachment({
-        attachmentId: attachmentId
+        attachmentId
       }).then(response => {
         this.formData = response.data
-        console.log(this.formData)
+        this.formData.measure = this.formData.height + ' * ' + this.formData.width
+        this.formData.size = this.formData.size + ' KB'
+        this.formData.markdown = '![' + this.formData.attachmentName + '](' + this.formData.path + ')'
       })
+    },
+    // 删除附件
+    deleteAttachment(attachmentId) {
+      this.$confirm('此操作将永久删除附件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteAttachment({
+          attachmentId: this.formData.attachmentId
+        }).then((response) => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.handleClose()
+        })
+      }).catch(() => {})
     }
   }
 }
@@ -86,11 +137,7 @@ export default {
 ::v-deep :focus{
     outline: 0;
 }
-.treeCategory {
-  align-items: center;
-  margin-top: 9px;
-}
-.post-drawer__content {
+.attachment-drawer__content {
   margin-right: 10px;
 }
 .el-button {

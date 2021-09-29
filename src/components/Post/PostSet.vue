@@ -65,7 +65,7 @@
       </el-form>
       <div class="post-drawer__footer">
         <el-button type="primary" @click="handleAddEdit()">确定</el-button>
-        <el-button @click="cancelForm">取 消</el-button>
+        <el-button @click="handleClose">取 消</el-button>
       </div>
     </div>
   </el-drawer>
@@ -168,15 +168,8 @@ export default {
       this.addEditVisible = false
       this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
+      this.$emit('reload')
       // 关闭抽屉，将已有标签置空
-      this.tagIds = null
-    },
-    // 取消按钮
-    cancelForm() {
-      this.addEditVisible = false
-      this.$refs.form.resetFields()
-      this.$emit('update:visible', this.addEditVisible)
-      // 取消按钮，将已有标签置空
       this.tagIds = null
     },
     // 分类列表数据
@@ -188,7 +181,6 @@ export default {
     // 获取分类列表选中内容
     handleChange() {
       var checkedCategory = this.$refs['category-cascader'].getCheckedNodes()
-      console.log(checkedCategory)
       this.categoryIds = checkedCategory.map(item => item.data.categoryId)
     },
     // 标签列表
@@ -211,10 +203,7 @@ export default {
           tagIds: this.tagIds,
           categoryIds: this.categoryIds
         }).then(() => {
-          this.addEditVisible = false
-          this.$emit('reload')
-          this.$emit('update:visible', this.addEditVisible)
-          this.$refs.form.resetFields()
+          this.handleClose()
         })
       } else {
         setPost({
@@ -229,10 +218,7 @@ export default {
           tagIds: this.tagIds,
           categoryIds: this.categoryIds
         }).then(() => {
-          this.addEditVisible = false
-          this.$emit('update:visible', this.addEditVisible)
-          this.$emit('reload')
-          this.$refs.form.resetFields()
+          this.handleClose()
         })
       }
     }

@@ -84,9 +84,7 @@ export default {
       },
       total: 0,
       // 列表数据
-      tableData: null,
-      // 大图预览
-      srcList: null
+      tableData: null
     }
   },
   created() {
@@ -107,9 +105,6 @@ export default {
       pageAttachment(this.pageQuery).then(response => {
         this.tableData = response.data.records
         this.total = response.data.total
-        this.srcList = response.data.records.map(item => {
-          return item.path
-        })
       })
     }
   }
