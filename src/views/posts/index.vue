@@ -82,8 +82,8 @@
               <template slot-scope="scope">
                 <div style="display: flex;">
                   <el-button size="mini" @click="writePost(scope.row.postId)">编辑</el-button>
-                  <el-button size="mini" type="danger" @click="deletePost(scope.row.postId)">删除</el-button>
                   <el-button size="mini" @click="setPost(scope.row.postId)">设置</el-button>
+                  <el-button size="mini" type="danger" @click="deletePost(scope.row.postId)">删除</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -257,6 +257,14 @@ export default {
       this.$router.push({
         path: '/posts/write',
         query: { postId }
+      })
+    },
+    // 根据文章ID获取文章详情
+    queryPostDetail(abbr) {
+      console.log('222')
+      this.$router.push({
+        path: '/post/detail',
+        query: { abbr }
       })
     }
   }
