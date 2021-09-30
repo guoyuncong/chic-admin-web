@@ -60,7 +60,15 @@
           />
         </el-form-item>
         <el-form-item label="关键字" label-width="100px" prop="keywords">
-          <el-input v-model="formData.keywords" placeholder="文章搜索" autocomplete="off" />
+          <el-input v-model="formData.keywords" placeholder="请输入关键字" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="封面地址" label-width="100px" prop="thumbnail">
+          <el-input v-model="formData.thumbnail" placeholder="请输入封边地址" autocomplete="off" />
+          <el-image :src="formData.thumbnail">
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline" />
+            </div>
+          </el-image>
         </el-form-item>
       </el-form>
       <div class="post-drawer__footer">
@@ -216,7 +224,8 @@ export default {
           digest: this.formData.digest,
           keywords: this.formData.keywords,
           tagIds: this.tagIds,
-          categoryIds: this.categoryIds
+          categoryIds: this.categoryIds,
+          thumbnail: this.formData.thumbnail
         }).then(() => {
           this.handleClose()
         })
