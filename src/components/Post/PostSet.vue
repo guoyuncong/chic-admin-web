@@ -209,7 +209,8 @@ export default {
           digest: this.formData.digest,
           keywords: this.formData.keywords,
           tagIds: this.tagIds,
-          categoryIds: this.categoryIds
+          categoryIds: this.categoryIds,
+          thumbnail: this.formData.thumbnail
         }).then(() => {
           this.handleClose()
         })
