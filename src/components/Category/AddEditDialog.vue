@@ -3,19 +3,22 @@
     <!-- 弹框：添加分类-->
     <el-dialog :title="dialogType ==='add' ? '新增分类': '编辑分类'" :visible.sync="addEditVisible" width="30%" @close="close">
       <el-form ref="form">
-        <el-form-item v-if="dialogType ==='add'" label="父级分类" label-width="100px">
+        <el-form-item v-if="dialogType ==='add'" label="父级分类" label-width="100px" prop="parentCategoryName">
           <el-input v-model="formData.categoryName" size="small" autocomplete="off" :disabled="true" />
         </el-form-item>
-        <el-form-item label="名称" label-width="100px">
+        <el-form-item label="名称" label-width="100px" prop="categoryName">
           <el-input v-model="categoryName" size="small" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="别名" label-width="100px">
+        <el-form-item label="别名" label-width="100px" prop="alias">
           <el-input v-model="formData.alias" size="small" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="描述" label-width="100px">
+        <el-form-item label="描述" label-width="100px" prop="description">
           <el-input v-model="formData.description" size="small" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="排序" label-width="100px">
+        <el-form-item label="封面图" label-width="100px" prop="thumbnail">
+          <el-input v-model="formData.thumbnail" size="small" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="排序" label-width="100px" prop="sort">
           <el-select v-model="formData.sort" placeholder="请选择">
             <el-option v-for="item in options" :key="item" :value="item" />
           </el-select>
@@ -63,6 +66,7 @@ export default {
         categoryName: '',
         alias: '',
         description: '',
+        thumbnail: '',
         sort: null
       },
       // 下拉选择排序框
@@ -75,7 +79,6 @@ export default {
         this.addEditVisible = val
         if (val && this.dialogType === 'add') {
           this.formData = JSON.parse(JSON.stringify(this.rowInfo))
-          console.log(this.formData)
         }
         if (val && this.dialogType === 'edit') {
           this.formData = JSON.parse(JSON.stringify(this.rowInfo))
@@ -87,10 +90,11 @@ export default {
   methods: {
     // 弹框关闭
     close() {
-      this.$refs.form.resetFields()
       this.addEditVisible = false
       this.formData = this.$options.data.call(this).formData
+      this.$refs.form.resetFields()
       this.$emit('update:visible', this.addEditVisible)
+      this.$emit('reload')
     },
     // 新增/编辑分类
     handleAddEdit() {
@@ -98,14 +102,12 @@ export default {
         addCategory({
           parentId: this.formData.categoryId,
           categoryName: this.categoryName,
-          alias: this.forData.alias,
-          description: this.forData.description,
-          sort: this.forData.sort
+          alias: this.formData.alias,
+          description: this.formData.description,
+          thumbnail: this.formData.thumbnail,
+          sort: this.formData.sort
         }).then(() => {
-          this.$refs.form.resetFields()
-          this.addCategoryVisible = false
-          this.$emit('update:addVisible', this.addVisible)
-          this.$emit('reload')
+          this.close()
         })
       } else {
         console.log(this.formData)
@@ -114,11 +116,10 @@ export default {
           categoryName: this.categoryName,
           alias: this.formData.alias,
           sort: this.formData.sort,
+          thumbnail: this.formData.thumbnail,
           description: this.formData.description
         }).then(() => {
-          this.editCategoryVisible = false
-          this.$emit('update:updateVisible', this.editVisible)
-          this.$emit('reload')
+          this.close()
         })
       }
     }
